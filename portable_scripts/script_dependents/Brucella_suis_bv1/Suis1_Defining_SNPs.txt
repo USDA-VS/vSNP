@@ -1,0 +1,13 @@
+Designation	Position	ALT	Label
+2	1245156		Group
+3	1987040		Group
+4	1099151		Group
+5	1167451		Group
+6	1993143		Group
+7	1509482		Group
+8	2107015		Group
+9	2092580		Group
+8A	1992992		Subgroup
+2A	164225		Subgroup
+2B	1991852		Subgroup
+1A1	1059895		Clade
