@@ -502,8 +502,7 @@ elif [[ $1 == ceti2 ]]; then
     bioinfoVCF="/bioinfo11/TStuber/Results/brucella/ceti2/vcfs"
     echo "vcftofasta.sh ran as B ceti group 2"
     echo "Script vcftofasta.sh ran using B ceti group 2 variables" > section5
-    email_list=
-"tod.p.stuber@usda.gov Christine.R.Quance@usda.gov Suelee.Robbe-Austerman@aphis.usda.gov"
+    email_list="tod.p.stuber@usda.gov Christine.R.Quance@usda.gov Suelee.Robbe-Austerman@aphis.usda.gov"
 
 
 elif [[ $1 == ovis ]]; then
