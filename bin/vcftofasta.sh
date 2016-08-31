@@ -241,7 +241,7 @@ EOL
 
 chmod 755 ./excelcolumnextract.py
 
-./excelcolumnextract.py /bioinfo11/TStuber/Results/brucella/ALL_WGS.xlsx | sed 's/text://' | tr -d "'" | sed -e 's/[.*:()/\?]/_/g' -e 's/ /_/g' -e 's/_-/_/' -e 's/-_/_/' -e 's/__/_/g' -e 's/[_-]$//' > /bioinfo11/TStuber/Results/brucella/bruc_tags.txt
+./excelcolumnextract.py /fdrive/Brucella/Brucella\ Logsheets/ALL_WGS.xlsx | sed 's/text://' | tr -d "'" | sed -e 's/[.*:()/\?]/_/g' -e 's/ /_/g' -e 's/_-/_/' -e 's/-_/_/' -e 's/__/_/g' -e 's/[_-]$//' > /bioinfo11/TStuber/Results/brucella/bruc_tags.txt
 
 rm ./excelcolumnextract.py
 
