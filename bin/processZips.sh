@@ -334,8 +334,14 @@ elif [ $1 == TB3 ]; then
 #hqs="/home/shared/mycobacterium/tbc/snppipeline/tb3/HQ-13-7575.vcf"
 #cp /home/shared/mycobacterium/tbc/snppipeline/tb3/NC_021193it3-readreference.fasta ./
 #hqs="/home/shared/mycobacterium/tbc/snppipeline/tb3/13-7575-highqualitysnps.vcf"
-cp /home/shared/mycobacterium/tbc/mtb-ancestor.fasta ./
-hqs="/home/shared/mycobacterium/tbc/15-5316-highqualitysnps.vcf"
+
+#cp /home/shared/mycobacterium/tbc/mtb-ancestor.fasta ./
+#hqs="/home/shared/mycobacterium/tbc/15-5316-highqualitysnps.vcf"
+
+cp /home/shared/mycobacterium/tbc/snppipeline/tb4b/NC000962.fasta ./
+hqs="/home/shared/mycobacterium/tbc/snppipeline/tb4b/15-3162-highqualitysnps.vcf"
+bioinfo="/bioinfo11/TStuber/Results/mycobacterium/tbc/mungi/newFiles"
+gff_file="/home/shared/mycobacterium/tbc/snppipeline/tb4b/NC_000962.gff"
 
 bioinfo="/bioinfo11/TStuber/Results/mycobacterium/tbc/tb3/newFiles"
 #sharedSAN="/home/shared/mycobacterium/bovis/newFiles"
