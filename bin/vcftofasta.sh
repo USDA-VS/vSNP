@@ -629,15 +629,15 @@ elif [[ $1 == tb3 ]]; then
 
     gbk_file="/home/shared/mycobacterium/tbc/snppipeline/mungi/NC_000962.gbk"
     # This file tells the script how to cluster VCFs
-    DefiningSNPs=""
+    DefiningSNPs="/bioinfo11/TStuber/Results/mycobacterium/tbc/tb3-NC_000962/tb3_NC_000962-DefiningSNPsGroupDesignations.txt"
 
     FilterAllVCFs=yes #(yes or no), Do you want to filter all VCFs?
     FilterGroups=yes #(yes or no), Do you want to filter VCFs withing their groups, subgroups, and clades
-    RemoveFromAnalysis="/bioinfo11/TStuber/Results/mycobacterium/tbc/tb3-NC_000962/tb3_NC_000962-DefiningSNPsGroupDesignations.txt"
+    RemoveFromAnalysis="/bioinfo11/TStuber/Results/mycobacterium/vcfs/RemoveFromAnalysis.txt"
     QUAL=150 # Minimum quality for calling a SNP
     export lowEnd=1
     export highEnd=200 # QUAL range to change ALT to N
-    bioinfoVCF="/bioinfo11/TStuber/Results/mycobacterium/tbc/tb3/vcfs"
+    bioinfoVCF="/bioinfo11/TStuber/Results/mycobacterium/tbc/tb3-NC_000962/script2"
     echo "vcftofasta.sh ran as ${1}"
     echo "Script vcftofasta.sh ran using ${1} variables" >> section5
     email_list="tod.p.stuber@usda.gov Suelee.Robbe-Austerman@aphis.usda.gov"
