@@ -625,10 +625,15 @@ elif [[ $1 == tb2 ]]; then
 elif [[ $1 == tb3 ]]; then
     genotypingcodes="/bioinfo11/TStuber/Results/mycobacterium/Untitled.tab"
     # This file tells the script how to cluster VCFs
-    DefiningSNPs="/bioinfo11/TStuber/Results/mycobacterium/tbc/tb3/tb3DefiningSNPsGroupDesignations.txt"
+    #Used with previously, with TB3 reference --> DefiningSNPs="/bioinfo11/TStuber/Results/mycobacterium/tbc/tb3/tb3DefiningSNPsGroupDesignations.txt"
+
+    gbk_file="/home/shared/mycobacterium/tbc/snppipeline/mungi/NC_000962.gbk"
+    # This file tells the script how to cluster VCFs
+    DefiningSNPs=""
+
     FilterAllVCFs=yes #(yes or no), Do you want to filter all VCFs?
-    FilterGroups=no #(yes or no), Do you want to filter VCFs withing their groups, subgroups, and clades
-    RemoveFromAnalysis="/bioinfo11/TStuber/Results/mycobacterium/vcfs/RemoveFromAnalysis.txt"
+    FilterGroups=yes #(yes or no), Do you want to filter VCFs withing their groups, subgroups, and clades
+    RemoveFromAnalysis="/bioinfo11/TStuber/Results/mycobacterium/tbc/tb3-NC_000962/tb3_NC_000962-DefiningSNPsGroupDesignations.txt"
     QUAL=150 # Minimum quality for calling a SNP
     export lowEnd=1
     export highEnd=200 # QUAL range to change ALT to N
@@ -640,7 +645,8 @@ elif [[ $1 == tb3 ]]; then
     # For tb inputXLS.py creates text files with positions to be filetered, and places them in FilterDirectory
     # Excel file that is being used is at: /bioinfo11/TStuber/Results/mycobacterium/vcfs/Filtered_Regions.xlsx
     # Excel tab label "New groupings"
-    excelinfile="/bioinfo11/TStuber/Results/mycobacterium/tbc/tb3/tb3Filtered_Regions.xlsx"
+    #Used with previously, with TB3 reference --> excelinfile="/bioinfo11/TStuber/Results/mycobacterium/tbc/tb3/tb3Filtered_Regions.xlsx"
+    excelinfile="/bioinfo11/TStuber/Results/mycobacterium/tbc/tb3-NC_000962/tb3_NC_000962-Filtered_Regions.xlsx"
     parseXLS | sed 's/ u//g' | tr "," "\t" | sed 's/\[//g' |sed 's/\]//g' |sed 's/ //g' | sed 's/^u//g' | sed 's/\.0//g' | tr -d "'"  > ${filterdir}/filterFile.txt
     filterFileCreations
 
