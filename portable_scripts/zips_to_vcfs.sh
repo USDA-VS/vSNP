@@ -22,14 +22,27 @@
 #   Reference, ~/public/SNP_analysis/script_dependents/Mycobacterium_bovis/NC_002945.fasta
 #################################################################################
 
+alias pause='read -p "$LINENO Enter"'
+
 echo "**************************************************************************"
 echo "**************************** START ${PWD##*/} ****************************"
 echo "**************************************************************************"
 
-picard='Set into your PATH picard.jar and remove exit 1 below'
-    echo "Picard jar files are not in PATH"
-    echo "Add directory containing jars to PATH"
-    echo "see line $LINENO"
+# set path to script dependents folder
+SCRIPT_DEPENDENTS="/home/tstuber/workspace/snp_analysis/portable_scripts/script_dependents"
+
+if [ -e ! $SCRIPT_DEPENDENTS/Mycobacterium_bovis/DefiningSNPsGroupDesignations.txt ]; then
+    echo "Set path to script dependents folder"
+    echo "See line: $LINENO"
+    exit 1
+fi
+
+picard=`which picard.jar`
+if [[ -z $picard ]]; then
+    echo "picard.jar not in PATH"
+    echo "picard version >1.14"
+    echo "Add picard.jar to PATH"
+    echo "See line: $LINENO"
     exit 1
 fi
 
@@ -37,6 +50,7 @@ BWA=`which bwa`
 if [[ -z $BWA ]]; then
     echo "bwa is not in PATH"
     echo "Add bwa to PATH"
+    echo "See line: $LINENO"
     exit 1
 fi
 
@@ -44,6 +58,7 @@ SAMTOOLS=`which samtools`
     if [[ -z $SAMTOOLS ]]; then
     echo "samtools is not in PATH"
     echo "Add samtools to PATH"
+    echo "See line: $LINENO"
     exit 1
 fi
 
@@ -51,6 +66,7 @@ ABYSS=`which abyss-pe`
     if [[ -z $ABYSS ]]; then
     echo "abyss-pe is not in PATH"
     echo "Add abyss-pe to PATH"
+    echo "See line: $LINENO"
     exit 1
 fi
 
@@ -58,6 +74,7 @@ BAMTOOLS=`which bamtools`
 if [[ -z $BAMTOOLS ]]; then
     echo "Bamtools is not in PATH"
     echo "Add Bamtools to PATH"
+    echo "See line: $LINENO"
     exit 1
 fi
 
@@ -65,6 +82,7 @@ GATK=`which GenomeAnalysisTK.jar`
 if [[ -z $GATK ]]; then
     echo "GenomeAnalysisTK.jar is not in PATH"
     echo "Add GenomeAnalysisTK.jar to PATH"
+    echo "See line: $LINENO"
     exit 1
 fi
 
@@ -72,6 +90,7 @@ IGVTOOLS=`which igvtools.jar`
 if [[ -z $IGVTOOLS ]]; then
     echo "igvtools.jar is not in PATH"
     echo "Add igvtools.jar to PATH"
+    echo "See line: $LINENO"
     exit 1
 fi
 
@@ -79,6 +98,7 @@ SPOLIGOSPACERFINDER=`which spoligoSpacerFinder.sh`
 if [[ -z $SPOLIGOSPACERFINDER ]]; then
     echo "spoligoSpacerFinder.sh is not in PATH"
     echo "Add spoligoSpacerFinder.sh to PATH"
+    echo "See line: $LINENO"
     exit 1
 fi
 
@@ -100,13 +120,13 @@ ls ../zips/*.fastq* | while read file; do ln -s $file; done
 
 # Lineage Bov-Afri, AF2122
 if [ $1 == TBBOV ]; then
-    cp ~/public/SNP_analysis/script_dependents/Mycobacterium_bovis/NC_002945.fasta ./
+    cp $SCRIPT_DEPENDENTS/Mycobacterium_bovis/NC_002945.fasta ./
     if [[ ! -e NC_002945.fasta ]]; then
         echo "At line $LINENO check your path to reference"
         exit 1
     fi
 
-    hqs=~/public/SNP_analysis/script_dependents/Mycobacterium_bovis/HighestQualitySNPs.vcf
+    hqs=$SCRIPT_DEPENDENTS/Mycobacterium_bovis/HighestQualitySNPs.vcf
     if [[ -z $hqs ]]; then
         echo "Check your path to VCF containing high quality SNPs at line: $LINENO"
         exit 1
@@ -165,7 +185,7 @@ bwa index $ref
 #adding -B 8 will require reads to have few mismatches to align to reference.  -B 1 will allow more mismatch per read.
 echo "***Making Sam file"
 bwa mem -M -t 16 -R @RG"\t"ID:"$n""\t"PL:ILLUMINA"\t"PU:"$n"_RG1_UNIT1"\t"LB:"$n"_LIB1"\t"SM:"$n" $ref $forReads $revReads > $n.sam
-
+ 
 # -b	 Output in the BAM format.
 # -h	 Include the header in the output.
 #-F INT	 Skip alignments with bits present in INT [0]
@@ -178,7 +198,7 @@ samtools view -bh -T $ref $n.sam > $n.all.bam
 #Strip off the unmapped reads
 samtools view -h -f4 $n.all.bam > $n.unmappedReads.sam
 #Create fastqs of unmapped reads to assemble
-java -Xmx4g -jar $SAMTOFASTQ INPUT=$n.unmappedReads.sam FASTQ=${n}-unmapped_R1.fastq SECOND_END_FASTQ=${n}-unmapped_R2.fastq
+java -Xmx4g -jar ${picard} SamToFastq INPUT=$n.unmappedReads.sam FASTQ=${n}-unmapped_R1.fastq SECOND_END_FASTQ=${n}-unmapped_R2.fastq
 rm $n.all.bam
 rm $n.unmappedReads.sam
 abyss-pe name=${n}_abyss k=64 in="${n}-unmapped_R1.fastq ${n}-unmapped_R2.fastq"
@@ -194,13 +214,13 @@ rm *abyss*
 ######################
 
 echo "***Sorting Bam"
-samtools sort $n.raw.bam $n.sorted
+samtools sort $n.raw.bam -o $n.sorted.bam
 echo "***Indexing Bam"
 samtools index $n.sorted.bam
 # Remove duplicate molecules
 
 echo "***Marking Duplicates"
-java -Xmx4g -jar  $MARKDUPLICATES INPUT=$n.sorted.bam OUTPUT=$n.dup.bam METRICS_FILE=$n.FilteredReads.xls ASSUME_SORTED=true REMOVE_DUPLICATES=true
+java -Xmx4g -jar  ${picard} MarkDuplicates INPUT=$n.sorted.bam OUTPUT=$n.dup.bam METRICS_FILE=$n.FilteredReads.xls ASSUME_SORTED=true REMOVE_DUPLICATES=true
 
 echo "***Index $n.dup.bam"
 samtools index $n.dup.bam
@@ -224,7 +244,7 @@ if [ ! -e $n.realignedBam.bam ]; then
 	echo "$n RealignedBam.bam failed to make.  Possible cause: Error in quality scores.  Try --fix_misencoded_quality_scores"
 	echo "$n RealignedBam.bam failed to make.  Possible cause: Error in quality scores.  Try --fix_misencoded_quality_scores" > $n.errorReport
 	#cat $n.errorReport | mutt -s "$n Alignment failure" -- tod.p.stuber@usda.gov
-	java -Xmx4g -jar ${gatk} -T IndelRealigner --fix_misencoded_quality_scores -I $n.dup.bam -R $ref -targetIntervals $n.forIndelRealigner.intervals -o $n.realignedBam.bam
+	java -Xmx4g -jar $GATK -T IndelRealigner --fix_misencoded_quality_scores -I $n.dup.bam -R $ref -targetIntervals $n.forIndelRealigner.intervals -o $n.realignedBam.bam
 fi
 
 # Uses a .vcf file which contains SNP calls of known high value to recalibrates base quality scores
