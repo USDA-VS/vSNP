@@ -1432,7 +1432,8 @@ fi
 rm RAxML_parsimonyTree*
 for i in RAxML*Tree*; do mv $i ../${i}.tre; done
 
-tr ":" "\n" < tableinput.${d} | tr "," "\n" | sed 's/(//g' | sed 's/)//g' | grep -v "\.[0-9]*" | grep -v "root" > cleanedAlignment.txt
+# on server2 "5e-07" value was in newick the "| grep -v "e-0" " cleans it out
+tr ":" "\n" < tableinput.${d} | tr "," "\n" | sed 's/(//g' | sed 's/)//g' | grep -v "\.[0-9]*" | grep -v "e-0" | grep -v "root" > cleanedAlignment.txt
 # Place headers onto aligned file
 { echo "reference_call"; cat cleanedAlignment.txt; } > cleanedAlignment.txt.temp; mv cleanedAlignment.txt{.temp,}
 { echo "reference_pos"; cat cleanedAlignment.txt; } > cleanedAlignment.txt.temp; mv cleanedAlignment.txt{.temp,}
