@@ -27,7 +27,7 @@ Designation	Position	ALT	Label
 26	960492	T	Group
 27	237923	T	Group
 28	1618394	T	Group
-TB	3910673		Group
+TB	3910673	?	Group
 			
 1A	1458346	T	Subgroup
 1A-1	2824728	T	Clade
