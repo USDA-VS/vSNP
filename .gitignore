@@ -1,0 +1,10 @@
+_site
+__pycache__
+*.DS_Store
+.sass-cache
+<<<<<<< HEAD
+dependencies/bi/**
+dependencies/virus/** 
+=======
+dependencies/bi/salmonella/heidelberg-SL476/script_dependents/Thumbs.db
+>>>>>>> 177aa604d41585813b30ef8d2bc4711743c5f423
