@@ -75,6 +75,8 @@ parser.add_argument('-q', '--quiet', action='store_true', dest='quiet', help='[*
 parser.add_argument('-m', '--email', action='store', dest='email', help='[**APHIS only**, specify own SMTP address for functionality] email options: all, s, tod, jess, suelee, chris, email_address')
 parser.add_argument('-u', '--upload', action='store_true', dest='upload', help='[**APHIS only**, specify own storage for functionality] upload files to the bioinfo drive')
 parser.add_argument('-t', '--table', action='store_true', dest='table', help='print reference/species table')
+parser.add_argument('-i', '--ignore_filters', action='store_true', dest='ignore_filters', help='print reference/species table')
+parser.add_argument('-l', '--label', action='store', dest='label', help='[Step 2 table filter.  Provide annotated label. Ex: "ppe|pgrs|repeat".  greedy/case-insensitive')
 args = parser.parse_args()
 
 if args.table:
@@ -98,6 +100,8 @@ arg_options = {
     "processor": args.processor,
     "quiet": args.quiet,
     "upload": args.upload,
+    "ignore_filters": args.ignore_filters,
+    "label": args.label,
 }
 print("")
 
@@ -117,7 +121,8 @@ arg_options['email_list'] = email_dict.get(args.email, None)
 
 ################################################################################################################################################
 
-all_file_types_count = len(glob.glob('*.*'))
+all_file_types = glob.glob('*.*')
+all_file_types_count = len([x for x in all_file_types if not re.match(r'.*log', x)]) #don't include immediately made .log files
 fastq_check = len(glob.glob('*fastq.gz'))
 vcf_check = len(glob.glob('*vcf'))
 

@@ -36,9 +36,20 @@ from collections import Counter
 from collections import defaultdict
 from Bio.SeqIO.QualityIO import FastqGeneralIterator
 from Bio import SeqIO
+import logging
+import inspect
 
 from parameters import Get_Specie_Parameters
-# import concurrent.futures as cf
+
+logging.basicConfig(format='%(levelname)s: %(message)s', filemode='w', filename='debug.log', level=logging.DEBUG)
+logging.getLogger().addHandler(logging.StreamHandler()) #print to console
+
+def warning_log(ex, inspect_getframeinfo, *args):
+    logging.warning(f'\nException occured, file: {inspect_getframeinfo.filename}\nfuction: {inspect.stack()[0][3]}, near line in script {inspect_getframeinfo.lineno} --> {type(ex).__name__, ex.args}\nAdditional args: {args}\n\n')
+
+def debug_log(ex, inspect_getframeinfo, *args):
+    logging.debug(f'\nException occured, file: {inspect_getframeinfo.filename}\nfuction: {inspect.stack()[0][3]}, near line in script {inspect_getframeinfo.lineno} --> {type(ex).__name__, ex.args}\nAdditional args: {args}\n\n')
+
 
 def run_loop(arg_options):
 
@@ -94,8 +105,7 @@ def run_loop(arg_options):
             summary_cumulative_file = copy_to + '/stat_alignment_culmulative_summary' + '.xlsx'
             summary_cumulative_file_temp = copy_to + '/stat_alignment_culmulative_summary-' + st + '-temp.xlsx'
             temp_folder = copy_to + '/temp'
-        except OSError:
-            print("\n\nBioinfo unresponsive\n\nUnable to copy to stats file\n\n")
+        except OSError as ex:
             text = "ERROR, Bioinfo unresponsive unable to copy to stats file"
             msg = MIMEMultipart()
             msg['From'] = "tod.p.stuber@aphis.usda.gov"
@@ -106,11 +116,12 @@ def run_loop(arg_options):
             smtp = smtplib.SMTP('10.10.8.12')
             smtp.send_message(msg)
             smtp.quit()
+            debug_log(ex, inspect.getframeinfo(inspect.currentframe()), "Bioinfo unresponsive unable to copy to stats file")
     ###
 
     directory_list = []
     for f in os.listdir('.'):
-        if not f.startswith('.'):
+        if not f.startswith('.') and not f.endswith('.log'):
             directory_list.append(f)
 
     total_samples = len(directory_list)
@@ -203,23 +214,26 @@ def run_loop(arg_options):
                     df_concat = pd.concat(frames, axis=1, sort=True) #cat frames
                     df_sorted = df_concat.loc[sorter] #sort based on sorter order
                     df_sorted.T.to_excel(summary_cumulative_file, index=False) # transpose before writing to excel, numerical index not needed
-                except BlockingIOError:
+                except BlockingIOError as ex:
                     sorter = list(df_stat_summary.index) #list of original column order
                     df_concat = pd.concat(frames, axis=1, sort=True) #cat frames
                     df_sorted = df_concat.loc[sorter] #sort based on sorter order
                     df_sorted.T.to_excel(summary_cumulative_file_temp, index=False)
+                    debug_log(ex, inspect.getframeinfo(inspect.currentframe()))
                     pass
-                except OSError:
+                except OSError as ex:
                     sorter = list(df_stat_summary.index) #list of original column order
                     df_concat = pd.concat(frames, axis=1, sort=True) #cat frames
                     df_sorted = df_concat.loc[sorter] #sort based on sorter order
+                    debug_log(ex, inspect.getframeinfo(inspect.currentframe()))
                     try:
                         df_sorted.T.to_excel(summary_cumulative_file_temp, index=False)
-                    except OSError:
-                        print("##### UNABLE TO MAKE CONNECTION TO BIOINFO")
+                    except OSError as ex:
+                        debug_log(ex, inspect.getframeinfo(inspect.currentframe()), "##### UNABLE TO MAKE CONNECTION TO BIOINFO")
                         pass
                     pass
             else:
+                logging.debug("Path to cumulative stat summary file not found")
                 print("Path to cumulative stat summary file not found")
 
     workbook.close()
@@ -230,8 +244,8 @@ def run_loop(arg_options):
     if arg_options['email_list']:
         try:
             send_email_step1(arg_options['email_list'], runtime, path_found, summary_file, st)
-        except TimeoutError:
-            print("Unable to send email with current smtp setting\n")
+        except TimeoutError as ex:
+            debug_log(ex, inspect.getframeinfo(inspect.currentframe()), "Unable to send email with current smtp setting")
             pass
 
 
@@ -302,13 +316,13 @@ def fix_vcf(each_vcf, arg_options):
                         print(line, file=write_out)
                     else:
                         print(line, file=write_out)
-        except IndexError:
-            print("##### IndexError: Deleting corrupt VCF file: " + each_vcf)
+        except IndexError as ex:
             mal.append("##### IndexError: Deleting corrupt VCF file: " + each_vcf)
+            warning_log(ex, inspect.getframeinfo(inspect.currentframe()), each_vcf, "Deleting corrupt VCF file")
             os.remove(each_vcf)
-        except UnicodeDecodeError:
-            print("##### UnicodeDecodeError: Deleting corrupt VCF file: " + each_vcf)
+        except UnicodeDecodeError as ex:
             mal.append("##### UnicodeDecodeError: Deleting corrupt VCF file: " + each_vcf)
+            warning_log(ex, inspect.getframeinfo(inspect.currentframe()), each_vcf, "Deleting corrupt VCF file")
             os.remove(each_vcf)
 
     write_out.close()
@@ -380,8 +394,8 @@ def read_aligner(sample_name, arg_options):
         for k, v in stat_summary.items():
             print("%s: %s" % (k, v))
         return(stat_summary)
-    except:
-        print("### Unable to return stat_summary")
+    except AttributeError as ex:
+        warning_log(ex, inspect.getframeinfo(inspect.currentframe()), sample_name, "Unable to return stat_summary")
         return arg_options
 
 
@@ -770,8 +784,9 @@ def align_reads(arg_options):
                 with open(abyss_out) as f:
                     for line in f:
                         abyss_contig_count += line.count(">")
-        except FileNotFoundError:
+        except FileNotFoundError as ex:
             abyss_contig_count = 0
+            debug_log(ex, inspect.getframeinfo(inspect.currentframe()), sample_name, "Zero Abyss contigs")
 
         # Full bam stats
         stat_out = open("stat_align.txt", 'w')
@@ -799,13 +814,14 @@ def align_reads(arg_options):
             print(f"{unmapped_reads} unmapped reads")
         except:
             unmapped_reads = "none_found"
+            logging.debug("Zero unmapped reads")
             print(f"no unmapped reads")
         allbam_mapped_reads = "{:,}".format(allbam_mapped_reads)
 
         try:
             zero_coverage_vcf, good_snp_count, ave_coverage, genome_coverage = add_zero_coverage(sample_name, sample_reference, nodupbam, hapall, zero_coverage_vcf)
-        except FileNotFoundError:
-            print("#### ALIGNMENT ERROR, NO COVERAGE FILE: %s" % sample_name)
+        except FileNotFoundError as ex:
+            warning_log(ex, inspect.getframeinfo(inspect.currentframe()), sample_name, "ALIGNMENT ERROR, NO COVERAGE FILE")
             text = "ALIGNMENT ERROR, NO COVERAGE FILE " + sample_name
             msg = MIMEMultipart()
             msg['From'] = "tod.p.stuber@aphis.usda.gov"
@@ -900,7 +916,8 @@ def align_reads(arg_options):
             os.remove('temp.csv')
             os.remove('v_header.csv')
             os.remove('v_annotated_body.csv')
-        except FileNotFoundError:
+        except FileNotFoundError as ex:
+            debug_log(ex, inspect.getframeinfo(inspect.currentframe()), sample_name)
             pass
         os.remove(samfile)
         os.remove(bamfile)
@@ -934,7 +951,8 @@ def align_reads(arg_options):
             if paired:
                 shutil.move(unmapped_read2gz, unmapped)
             shutil.move(abyss_out, unmapped)
-        except FileNotFoundError:
+        except FileNotFoundError as ex:
+            debug_log(ex, inspect.getframeinfo(inspect.currentframe()), sample_name)
             pass
         alignment = working_directory + "/alignment"
         os.makedirs(alignment)
@@ -996,6 +1014,7 @@ def align_reads(arg_options):
             print("Dependent source:  {}" .format(arg_options['script_dependents']), file=verison_out)
             verison_out.close()
         except:
+            logging.debug("failed version capture")
             pass
 
         sequence_count = 0
@@ -1047,7 +1066,8 @@ def align_reads(arg_options):
             # worksheet.write(row, col, v)
         try:
             stat_summary.update(arg_options['read_quality_stats'])
-        except KeyError:
+        except KeyError as ex:
+            debug_log(ex, inspect.getframeinfo(inspect.currentframe()), sample_name)
             pass
         worksheet.write(1, 0, stat_summary.get('time_stamp', 'n/a'))
         worksheet.write(1, 1, stat_summary.get('sample_name', 'n/a'))
@@ -1581,6 +1601,7 @@ def send_email_step1(email_list, runtime, path_found, summary_file, st):
 
 
 def group_files(each_vcf, arg_options):
+
     mal = ""
     list_pass = []
     list_amb = []
@@ -1618,7 +1639,8 @@ def group_files(each_vcf, arg_options):
                 # capture ambigous defining SNPs in htmlfile
                 elif str(record.ALT[0]) != "None" and record.INFO['AC'][0] == 1:
                     list_amb.append(absolute_positon)
-            except ZeroDivisionError:
+            except ZeroDivisionError as ex:
+                warning_log(ex, inspect.getframeinfo(inspect.currentframe()), each_vcf, absolute_positon)
                 print("bad line in %s at %s" % (each_vcf, absolute_positon))
 
         for key in arg_options['inverted_position'].keys():
@@ -1676,39 +1698,44 @@ def group_files(each_vcf, arg_options):
                 pass
         #print(dict_amb, group_calls, malformed)
 
-    except ZeroDivisionError:
+    except ZeroDivisionError as ex:
         os.remove(each_vcf)
-        print("ZeroDivisionError: corrupt VCF, removed %s " % each_vcf)
+        warning_log(ex, inspect.getframeinfo(inspect.currentframe()), each_vcf)
         mal = "ZeroDivisionError: corrupt VCF, removed %s " % each_vcf
         group_calls.append("error")
-    except ValueError:
+    except ValueError as ex:
         os.remove(each_vcf)
-        print("ValueError: corrupt VCF, removed %s " % each_vcf)
+        warning_log(ex, inspect.getframeinfo(inspect.currentframe()), each_vcf)
         mal = "ValueError: corrupt VCF, removed %s " % each_vcf
         group_calls.append("error")
-    except UnboundLocalError:
+    except UnboundLocalError as ex:
         os.remove(each_vcf)
-        print("UnboundLocalError: corrupt VCF, removed %s " % each_vcf)
+        warning_log(ex, inspect.getframeinfo(inspect.currentframe()), each_vcf)
         mal = "UnboundLocalError: corrupt VCF, removed %s " % each_vcf
         group_calls.append("error")
-    except TypeError:
+    except TypeError as ex:
         os.remove(each_vcf)
-        print("TypeError: corrupt VCF, removed %s " % each_vcf)
+        warning_log(ex, inspect.getframeinfo(inspect.currentframe()), each_vcf)
         mal = "TypeError: corrupt VCF, removed %s " % each_vcf
         group_calls.append("error")
-    except SyntaxError:
+    except SyntaxError as ex:
         os.remove(each_vcf)
-        print("SyntaxError: corrupt VCF, removed %s " % each_vcf)
+        warning_log(ex, inspect.getframeinfo(inspect.currentframe()), each_vcf)
         mal = "SyntaxError: corrupt VCF, removed %s " % each_vcf
         group_calls.append("error")
-    except KeyError:
+    except KeyError as ex:
         os.remove(each_vcf)
-        print("KeyError: corrupt VCF, removed %s " % each_vcf)
+        warning_log(ex, inspect.getframeinfo(inspect.currentframe()), each_vcf)
         mal = "KeyError: corrupt VCF, removed %s " % each_vcf
         group_calls.append("error")
-    except StopIteration:
-        print("StopIteration: %s" % each_vcf)
-        mal = "KeyError: corrupt VCF, removed %s " % each_vcf
+        warning_log(ex, inspect.getframeinfo(inspect.currentframe()), each_vcf)
+    except StopIteration as ex:
+        warning_log(ex, inspect.getframeinfo(inspect.currentframe()), each_vcf)
+        mal = "StopIteration: corrupt VCF, removed %s " % each_vcf
+        group_calls.append("error")
+    except IndexError as ex:
+        warning_log(ex, inspect.getframeinfo(inspect.currentframe()), each_vcf)
+        mal = "IndexError: corrupt VCF, removed %s " % each_vcf
         group_calls.append("error")
 
     the_sample_name = group_calls[0:1]
@@ -1743,9 +1770,8 @@ def run_script2(arg_options):
                     subprocess.call("raxmlHPC")
                     sys_raxml = "raxmlHPC"
                     print("RAxML found")
-                except OSError:
-                    print("#####RAxML is not in you PATH")
-                    print("#####See help page for support")
+                except OSError as ex:
+                    warning_log(ex, inspect.getframeinfo(inspect.currentframe()), "#####RAxML is not in you PATH")
                     sys.exit(0)
     arg_options['sys_raxml'] = sys_raxml
     print("\n\n----> RAxML found in $PATH as: %s <-----" % arg_options['sys_raxml'])
@@ -1951,8 +1977,8 @@ def run_script2(arg_options):
     pretext_vcf_starting_list = set(pretext_vcf_starting_list)
     try:
         pretext_flattened_list.remove('root')
-    except ValueError:
-        print("\n#### Defining SNPs needed.  If there are no defining SNP then rerun using -a option\n")
+    except ValueError as ex:
+        warning_log(ex, inspect.getframeinfo(inspect.currentframe()), "Defining SNPs needed.  If there are no defining SNP then rerun using -a option")
         exit(0)
     difference_start_end_file = pretext_vcf_starting_list.symmetric_difference(pretext_flattened_list)
     difference_start_end_file = list(difference_start_end_file)
@@ -1976,7 +2002,7 @@ def run_script2(arg_options):
     print("<h4>There are %s VCFs in this run</h4>" % file_number, file=htmlfile)
 
     #OPTIONS
-    print("Additional options ran: email: %s, filter: %s, all_vcf: %s, elite: %s, no annotation: %s, debug: %s, get: %s, uploaded: %s" % (arg_options['email_list'], arg_options['filter_finder'], arg_options['all_vcf'], arg_options['elite'], arg_options['no_annotation'], arg_options['debug_call'], arg_options['get'], arg_options['upload']), file=htmlfile)
+    print(f"Additional options ran: email: {arg_options['email_list']}, filter: {arg_options['filter_finder']}, all_vcf: {arg_options['all_vcf']}, elite: {arg_options['elite']}, no annotation: {arg_options['no_annotation']}, debug: {arg_options['debug_call']}, get: {arg_options['get']}, uploaded: {arg_options['upload']}, ignore filters: {arg_options['ignore_filters']}", file=htmlfile)
     if arg_options['all_vcf']:
         print("\n<h4>All_VCFs is available</h4>", file=htmlfile)
     elif arg_options['elite']:
@@ -2019,8 +2045,8 @@ def run_script2(arg_options):
     group_calls_list = list(filter(None, group_calls_list))
     try:
         group_calls_list.sort(key=lambda x: x[0]) # sort list of list by first element
-    except IndexError:
-        print("Unable to sort grouping list")
+    except IndexError as ex:
+        warning_log(ex, inspect.getframeinfo(inspect.currentframe()), "Unable to sort grouping list")
         pass
 
     for i in group_calls_list:
@@ -2056,6 +2082,7 @@ def run_script2(arg_options):
         for i in versions:
             print("%s<br>" % i, file=htmlfile)
     except:
+        logging.debug("Unable to capture versions")
         pass
     print("Dependent source:  {}<br>" .format(arg_options['script_dependents']), file=htmlfile)
 
@@ -2110,9 +2137,10 @@ def run_script2(arg_options):
             os.makedirs(dst, exist_ok=True)
             copy_tree(src, dst, preserve_mode=0, preserve_times=0)
             print("Samples were uploaded to {}" .format(dst))
-        except TypeError:
-            print("No place to upload, check parameters")
+        except TypeError as ex:
+            debug_log(ex, inspect.getframeinfo(inspect.currentframe()), "No place to upload, check parameters")
     else:
+        logging.debug("Samples were not copied or uploaded to additional location")
         print("\tSamples were not copied or uploaded to additional location")
 
     print("\n\tComparisons have been made with no obvious error.\n")
@@ -2184,6 +2212,7 @@ def test_duplicate():
 
 
 def change_names(arg_options, genotype_codes):
+    
     names_not_changed = []
     list_of_files = glob.glob('*vcf')
     name_found = False
@@ -2347,17 +2376,34 @@ def find_positions(filename, arg_options):
                 else:
                     if str(record.ALT[0]) != "None" and record.INFO['AC'][0] == 2 and len(record.REF) == 1 and record.QUAL > arg_options['qual_threshold'] and record.INFO['MQ'] > 56:
                         found_positions.update({absolute_positon: record.REF})
-            except KeyError:
+            except KeyError as ex:
+                warning_log(ex, inspect.getframeinfo(inspect.currentframe()), filename, absolute_positon)
                 pass
-    except ZeroDivisionError:
-        print("ZeroDivisionError error found")
-    except ValueError:
-        print("ValueError error found")
-    except UnboundLocalError:
-        print("UnboundLocalError error found")
-    except TypeError:
-        print("TypeError error found")
+    except ZeroDivisionError as ex:
+        warning_log(ex, inspect.getframeinfo(inspect.currentframe()), filename, absolute_positon)
+    except ValueError as ex:
+        warning_log(ex, inspect.getframeinfo(inspect.currentframe()), filename, absolute_positon)
+    except UnboundLocalError as ex:
+        warning_log(ex, inspect.getframeinfo(inspect.currentframe()), filename, absolute_positon)
+    except TypeError as ex:
+        warning_log(ex, inspect.getframeinfo(inspect.currentframe()), filename, absolute_positon)
     return found_positions
+
+
+def check_label(chromesome_position, label, annotation_dict):
+    chromesome, position = chromesome_position.split('-')
+    pattern_check_list = []
+    for gbk_chrome, pro in annotation_dict.items():
+        if gbk_chrome == chromesome:
+            try:
+                aaa=pro.iloc[pro.index.get_loc(int(position))][['chrom', 'locus', 'product', 'gene']]
+                chrom, name, locus, tag = aaa.values[0]
+                pattern = re.compile(label, re.IGNORECASE)
+                pattern_check = pattern.search(str(chrom) + str(position) + str(name) + str(locus) + str(tag))
+                ind_annotation = (f"{chrom} {position} {name} {locus} {tag}")
+                return pattern_check, ind_annotation
+            except KeyError:
+                return None
 
 
 def get_snps(directory, arg_options):
@@ -2387,21 +2433,45 @@ def get_snps(directory, arg_options):
     presize = len(all_positions)
 
     # Filter applied to all positions
-    try:
-        for pos in filter_dictionary[first_column_header]: #filter_list
-            all_positions.pop(pos, None)
-    except KeyError:
-        # Allow keyerror if group is not represented in filter worksheet
-        print("\n#### KeyError:  No filter column for group {} " .format(directory))
-        pass
+    if not arg_options['ignore_filters'] and not arg_options['label']:
+        try:
+            for pos in filter_dictionary[first_column_header]: #filter_list
+                all_positions.pop(pos, None)
+        except KeyError as ex:
+            # Allow keyerror if group is not represented in filter worksheet
+            debug_log(ex, inspect.getframeinfo(inspect.currentframe()), f'Not in filter worksheet: {first_column_header}')
+            pass
 
     # Filter applied to group
-    try:
-        for pos in filter_dictionary[directory]: #filter_list
-            all_positions.pop(pos, None)
-    except KeyError:
-        print("\n#### KeyError:  No filter column for group {} " .format(directory))
-        pass
+    if not arg_options['ignore_filters']and not arg_options['label']:
+        try:
+            for pos in filter_dictionary[directory]: #filter_list
+                all_positions.pop(pos, None)
+        except KeyError as ex:
+            debug_log(ex, inspect.getframeinfo(inspect.currentframe()), f'Not in filter worksheet: {directory}')
+            pass
+
+    if arg_options['label']:
+        filter_label_list = []
+        label = arg_options['label']
+        label = label.replace('/', '|')
+        label = label.replace('-', '|')
+        label = label.replace(' ', '|')
+        label = label.replace(',', '|')
+        label_filter = open("label_filter.txt", 'w')
+        print(f"Annotation labels filtered: {label}", file=label_filter)
+        for chromesome_position in all_positions:
+            try:
+                pattern_check, ind_annotation = check_label(chromesome_position, label, arg_options['annotation_dict'])
+            except TypeError:
+                pass
+            if pattern_check:
+                print(f"{chromesome_position} {ind_annotation}", file=label_filter)
+                filter_label_list.append(chromesome_position)
+        for chromesome_position in filter_label_list:
+            all_positions.pop(chromesome_position, None)
+        label_filter.close()
+
 
     print("\nDirectory: {}" .format(directory))
     print("Total positions found: {}" .format(presize))
@@ -2489,8 +2559,8 @@ def get_snps(directory, arg_options):
                         all_maybe_filter.remove(pos)
                     except ValueError:
                         pass
-            except KeyError:
-                print("KeyError, group {} was not found in filter file" .format(directory))
+            except KeyError as ex:
+                debug_log(ex, inspect.getframeinfo(inspect.currentframe()), f'Not in filter worksheet: {directory}')
         # for each possible posible position check if to filter.
         for absolute_positon in all_maybe_filter:
             ave_qual_value = ave_qual[absolute_positon]
@@ -2676,6 +2746,7 @@ def get_snps(directory, arg_options):
         else:
             os.system("{} -s {} -n raxml -m GTRCATI -o root -p 12345 -T {} > /dev/null 2>&1" .format(arg_options['sys_raxml'], alignment_file, arg_options['raxml_cpu']))
     except:
+        logging.warning('RAxML failed')
         write_out = open('RAXML_FAILED', 'w+')
         write_out.close()
         pass
@@ -2699,6 +2770,7 @@ def get_snps(directory, arg_options):
         try:
             os.system("cat {} | nw_display -s -S -w 1300 -t -v 30 -i 'opacity:0' -b 'opacity:0' -l 'font-size:14;font-family:serif;font-style:italic' -d 'stroke-width:1;stroke:blue' - > {}" .format(best_raxml_tre, best_raxml_svg)) #-s produces svg, -S suppress scale bar, -w to set the number of columns available for display, -t tab format, -v vertical spacing, -i inner node label, -b branch style
         except:
+            logging.debug(f'{directory} nw_display failed, likely RAxML related, not enough samples in group to build tree')
             pass
         out_org = str(os.getcwd()) + "/" + directory + "_" + time_mark + "-organized-table.txt"
         out_sort = str(os.getcwd()) + "/" + directory + "_" + time_mark + "-sorted-table.txt"
@@ -2839,8 +2911,8 @@ def get_snps(directory, arg_options):
         for r in glob.glob('*vcf'):
             os.remove(r)
 
-    except ValueError:
-        print("##### ValueError: %s #####" % file_name)
+    except ValueError as ex:
+        warning_log(ex, inspect.getframeinfo(inspect.currentframe()), file_name, 'Possible table creation failure')
         return
 
     try:
