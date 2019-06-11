@@ -37,14 +37,6 @@ Clone script to home directory:
     $ conda env create
     $ conda activate vsnp
 
- A dependency may still be written for legacy Python.  Check using...
-
-    $ cat $(which vcffirstheader)
- 
- If print statements do not contain parenthesis fix with the following command:
-
-    $ sed -i 's/print line.strip()/print(line.strip())/' $(which vcffirstheader)
-
 Put `vSNP` in your $PATH, or easier run lines below to put script in your anaconda PATH.
 
     $ ln -s {FULL PATH TO}/vSNP/vSNP.py ~/anaconda*/bin/
