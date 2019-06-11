@@ -62,7 +62,7 @@ See documentation at: https://usda-vs.github.io/snp_analysis/
 '''), epilog='''---------------------------------------------------------''')
 
 #universal
-parser.add_argument('-s', '--species', action='store', dest='species', help='OPTIONAL: Used to FORCE species type <see options above>')
+parser.add_argument('-r', '--reference', action='store', dest='species', help='OPTIONAL: Used to FORCE species type <see options above>')
 parser.add_argument('-d', '--debug', action='store_true', dest='debug_call', help='debug, run without pool.map')
 parser.add_argument('-g', '--get', action='store_true', dest='get', help='get, get to the core functions for debugging')
 parser.add_argument('-n', '--no_annotation', action='store_true', dest='no_annotation', help='no_annotation, run without annotation')
@@ -106,23 +106,16 @@ arg_options = {
 print("")
 
 email_dict = {}
-email_dict["all"] = "tod.p.stuber@aphis.usda.gov, Jessica.A.Hicks@aphis.usda.gov, Christine.R.Quance@aphis.usda.gov, Suelee.Robbe-Austerman@aphis.usda.gov, patrick.m.camp@aphis.usda.gov, David.T.Farrell@aphis.usda.gov, Robin.L.Swanson@aphis.usda.gov, Doris.M.Bravo@aphis.usda.gov, eto3@cdc.gov, kristina.lantz@aphis.usda.gov, Tyler.Thacker@aphis.usda.gov"
 email_dict["tod"] =  "tod.p.stuber@aphis.usda.gov"
 email_dict["jess"] =  "Jessica.A.Hicks@aphis.usda.gov"
-email_dict["suelee"] =  "tod.p.stuber@aphis.usda.gov, Jessica.A.Hicks@aphis.usda.gov, Tyler.Thacker@aphis.usda.gov, Suelee.Robbe-Austerman@aphis.usda.gov, Doris.M.Bravo@aphis.usda.gov, kristina.lantz@aphis.usda.gov, patrick.m.camp@aphis.usda.gov"
-email_dict["suelee-"] =  "tod.p.stuber@aphis.usda.gov, Suelee.Robbe-Austerman@aphis.usda.gov"
-email_dict["tyler-"] =  "tod.p.stuber@aphis.usda.gov, Tyler.Thacker@aphis.usda.gov"
-email_dict["chris"] =  "tod.p.stuber@aphis.usda.gov, Jessica.A.Hicks@aphis.usda.gov, Christine.R.Quance@aphis.usda.gov, Suelee.Robbe-Austerman@aphis.usda.gov, eto3@cdc.gov, kristina.lantz@aphis.usda.gov, Tyler.Thacker@aphis.usda.gov, patrick.m.camp@aphis.usda.gov"
-email_dict["chris-"] =  "tod.p.stuber@aphis.usda.gov, Christine.R.Quance@aphis.usda.gov"
-email_dict["kris"] =  "kristina.lantz@aphis.usda.gov, tod.p.stuber@aphis.usda.gov, jessica.a.hicks@aphis.usda.gov, suelee.robbe-austerman@aphis.usda.gov, mary.k.smith@aphis.usda.gov, patrick.m.camp@aphis.usda.gov"
-email_dict["doris"] =  "tod.p.stuber@aphis.usda.gov, jessica.a.hicks@aphis.usda.gov, doris.m.bravo@aphis.usda.gov, suelee.robbe-austerman@aphis.usda.gov, kristina.lantz@aphis.usda.gov, patrick.m.camp@aphis.usda.gov"
+email_dict["suelee"] =  "tod.p.stuber@aphis.usda.gov, Suelee.Robbe-Austerman@aphis.usda.gov"
 
 arg_options['email_list'] = email_dict.get(args.email, None)
 
 ################################################################################################################################################
 
 all_file_types = glob.glob('*.*')
-all_file_types_count = len([x for x in all_file_types if not re.match(r'.*log', x)]) #don't include immediately made .log files
+all_file_types_count = len([x for x in all_file_types if not re.match(r'.*log', x) and not re.match(r'.*out$', x)]) #don't include immediately made .log files
 fastq_check = len(glob.glob('*fastq.gz'))
 vcf_check = len(glob.glob('*vcf'))
 

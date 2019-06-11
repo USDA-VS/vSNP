@@ -90,12 +90,12 @@ def run_loop(arg_options):
 
     # Cumulative stats
     path_found = False
-    if os.path.isdir("/bioinfo11/TStuber/Results/stats"): #check bioinfo from server
+    if os.path.isdir("/bioinfo11/Results/stats"): #check bioinfo from server
         path_found = True
-        copy_to = "/bioinfo11/TStuber/Results/stats"
-    elif os.path.isdir("/Volumes/root/TStuber/Results"): #check bioinfo from Mac
+        copy_to = "/bioinfo11/Results/stats"
+    elif os.path.isdir("/Volumes/root/Results"): #check bioinfo from Mac
         path_found = True
-        copy_to = "/Volumes/root/TStuber/Results/stats"
+        copy_to = "/Volumes/root/Results/stats"
     else:
         copy_to = None
         print("Bioinfo not connected")
@@ -119,12 +119,14 @@ def run_loop(arg_options):
             debug_log(ex, inspect.getframeinfo(inspect.currentframe()), "Bioinfo unresponsive unable to copy to stats file")
     ###
 
-    directory_list = []
-    for f in os.listdir('.'):
-        if not f.startswith('.') and not f.endswith('.log'):
-            directory_list.append(f)
-
+    directory_list = [item for item in os.listdir() if os.path.isdir(item)]
     total_samples = len(directory_list)
+    directory_size = {}
+    for folder in directory_list: #run files by size, smallest to largest
+        size = sum(os.path.getsize(os.path.join(dirpath,filename)) for dirpath, dirnames, filenames in os.walk(folder) for filename in filenames)
+        directory_size[folder] = size
+    directory_size = {k: v for k, v in sorted(directory_size.items(), key=lambda x: x[1])}
+    directory_list = [*directory_size] #ordered list
     lower_count = 0
     upper_count = 1
     row = 1
@@ -251,7 +253,7 @@ def run_loop(arg_options):
 
 def reference_table():
 
-    pretty_table = PrettyTable(['-s option', 'Species', 'NCBI identifier'])
+    pretty_table = PrettyTable(['-r option', 'Species', 'NCBI identifier'])
     pretty_table.add_row(['af', 'Mycobacterium_bovis_AF2122/97', 'NC_002945.4'])
     pretty_table.add_row(['h37', 'Mycobacterium tuberculosis H37Rv', 'NC_000962.3'])
     pretty_table.add_row(['ab1', 'Brucella abortus biovar 1 str. 9-941', 'NC_006932.1, NC_006933.1'])
@@ -281,6 +283,7 @@ def reference_table():
     pretty_table.add_row(['flu', 'H7N3', 'segments 1-8'])
     pretty_table.add_row(['newcaste', '18-016505-001-fusion-HN', '18-016505-001-fusion-HN'])
     pretty_table.add_row(['belize', 'Newcastle disease virus isolate Belize (Spanish Lookout)/4224-3/2008', 'KF767466.1'])
+    pretty_table.add_row(['gua', 'Newcastle disease virus isolate Guatemala chicken/Guatemala/Gua1-1407/2018', 'Gua1_1407_2018'])
 
     return pretty_table
 
@@ -430,6 +433,7 @@ def get_species(arg_options):
     species_cross_reference["te_98-0554"] = ["CP021246"]
     species_cross_reference["te_atcc35865"] = ["NC_018108"]
     species_cross_reference["te_mce9"] = ["NC_014914"]
+    species_cross_reference["gua"] = ["Gua1_1407_2018"]
     vcf_list = glob.glob('*vcf')
     for each_vcf in vcf_list:
         print(each_vcf)
@@ -932,6 +936,7 @@ def align_reads(arg_options):
         os.remove(sample_reference + ".sa")
         os.remove(ref + ".dict")
         os.remove(duplicate_stat_file)
+        os.remove("stat_align.txt")
 
         unmapped = working_directory + "/unmapped"
         os.makedirs(unmapped)
@@ -1939,7 +1944,7 @@ def run_script2(arg_options):
             write_out.close()
 
             df = pd.read_csv('temp.csv', sep='\t', names=["chrom", "start", "stop", "locus", "product", "gene"])
-            #os.remove('temp.csv')
+            os.remove('temp.csv')
             df = df.sort_values(['start', 'gene'], ascending=[True, False])
             df = df.drop_duplicates('start')
             pro = df.reset_index(drop=True)
