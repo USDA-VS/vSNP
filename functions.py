@@ -44,11 +44,11 @@ from parameters import Get_Specie_Parameters
 logging.basicConfig(format='%(levelname)s: %(message)s', filemode='w', filename='debug.log', level=logging.DEBUG)
 logging.getLogger().addHandler(logging.StreamHandler()) #print to console
 
-def warning_log(ex, inspect_getframeinfo, *args):
-    logging.warning(f'\nException occured, file: {inspect_getframeinfo.filename}\nfuction: {inspect.stack()[0][3]}, near line in script {inspect_getframeinfo.lineno} --> {type(ex).__name__, ex.args}\nAdditional args: {args}\n\n')
+# def warning_log(ex, inspect_getframeinfo, *args):
+#     logging.warning(f'\nException occured, file: {inspect_getframeinfo.filename}\nfuction: {inspect.stack()[0][3]}, near line in script {inspect_getframeinfo.lineno} --> {type(ex).__name__, ex.args}\nAdditional args: {args}\n\n')
 
-def debug_log(ex, inspect_getframeinfo, *args):
-    logging.debug(f'\nException occured, file: {inspect_getframeinfo.filename}\nfuction: {inspect.stack()[0][3]}, near line in script {inspect_getframeinfo.lineno} --> {type(ex).__name__, ex.args}\nAdditional args: {args}\n\n')
+# def debug_log(ex, inspect_getframeinfo, *args):
+#     logging.debug(f'\nException occured, file: {inspect_getframeinfo.filename}\nfuction: {inspect.stack()[0][3]}, near line in script {inspect_getframeinfo.lineno} --> {type(ex).__name__, ex.args}\nAdditional args: {args}\n\n')
 
 
 def run_loop(arg_options):
