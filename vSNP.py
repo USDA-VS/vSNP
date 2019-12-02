@@ -25,7 +25,6 @@ import smtplib
 from multiprocessing import Pool
 from dask import delayed
 from itertools import repeat as itertools_repeat
-from collections import Iterable
 from numpy import mean
 from email.utils import formatdate
 from email.mime.text import MIMEText
@@ -106,9 +105,19 @@ arg_options = {
 print("")
 
 email_dict = {}
-email_dict["tod"] =  "tod.p.stuber@aphis.usda.gov"
-email_dict["jess"] =  "Jessica.A.Hicks@aphis.usda.gov"
-email_dict["suelee"] =  "tod.p.stuber@aphis.usda.gov, Suelee.Robbe-Austerman@aphis.usda.gov"
+email_dict["all"] = "tod.p.stuber@usda.gov, Jessica.A.Hicks@usda.gov, Christine.R.Quance@usda.gov, Suelee.Robbe-Austerman@usda.gov, patrick.m.camp@usda.gov, David.T.Farrell@usda.gov, Doris.M.Bravo@usda.gov, eto3@cdc.gov, kristina.lantz@usda.gov, Tyler.Thacker@usda.gov, Timothy.Butler@usda.gov"
+email_dict["tod"] =  "tod.p.stuber@usda.gov"
+email_dict["jess"] =  "Jessica.A.Hicks@usda.gov"
+email_dict["marylea-"] =  "tod.p.stuber@usda.gov, mary.l.killian@usda.gov"
+email_dict["marylea"] =  "tod.p.stuber@usda.gov, mary.l.killian@usda.gov, mia.kim.torchetti@usda.gov, kerrie.m.franzen@usda.gov"
+email_dict["suelee"] =  "tod.p.stuber@usda.gov, Jessica.A.Hicks@usda.gov, Tyler.Thacker@usda.gov, Suelee.Robbe-Austerman@usda.gov, Doris.M.Bravo@usda.gov, kristina.lantz@usda.gov, patrick.m.camp@usda.gov"
+email_dict["suelee-"] =  "tod.p.stuber@usda.gov, Suelee.Robbe-Austerman@usda.gov"
+email_dict["tyler-"] = "tod.p.stuber@usda.gov, Tyler.Thacker@usda.gov"
+email_dict["tyler"] =  "tod.p.stuber@usda.gov, Jessica.A.Hicks@usda.gov, Tyler.Thacker@usda.gov, Suelee.Robbe-Austerman@usda.gov"
+email_dict["chris"] =  "tod.p.stuber@usda.gov, Jessica.A.Hicks@usda.gov, Christine.R.Quance@usda.gov, Suelee.Robbe-Austerman@usda.gov, eto3@cdc.gov, kristina.lantz@usda.gov, Tyler.Thacker@usda.gov, patrick.m.camp@usda.gov"
+email_dict["chris-"] =  "tod.p.stuber@usda.gov, Christine.R.Quance@usda.gov"
+email_dict["kris"] =  "kristina.lantz@usda.gov, tod.p.stuber@usda.gov, jessica.a.hicks@usda.gov, suelee.robbe-austerman@usda.gov, mary.k.smith@usda.gov, patrick.m.camp@usda.gov"
+email_dict["doris"] =  "tod.p.stuber@usda.gov, jessica.a.hicks@usda.gov, doris.m.bravo@usda.gov, suelee.robbe-austerman@usda.gov, kristina.lantz@usda.gov, patrick.m.camp@usda.gov"
 
 arg_options['email_list'] = email_dict.get(args.email, None)
 
