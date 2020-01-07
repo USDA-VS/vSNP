@@ -49,16 +49,7 @@ class Get_Specie_Parameters():
             bio_drive_dep['gua'] = bioinfo + "/Analysis/results/newcastle/vSNP/guatemala/script_dependents"
             return (bio_drive_dep)
 
-        if os.path.isdir("/Volumes/bioinfo/project"):
-            bioinfo = "/Volumes/bioinfo/project"
-            self.bio_drive_dep = get_my_path(bioinfo)
-            self.upload_to = None
-        elif os.path.isdir("/project"):
-            bioinfo = "/project"
-            self.bio_drive_dep = get_my_path(bioinfo)
-            self.upload_to = "/project"
-        else:
-            self.upload_to = None
+        self.upload_to = None
         real_path = os.path.dirname(os.path.realpath(__file__))
         print("real path command --> {}".format(real_path))
         real_path = real_path.split('/')
