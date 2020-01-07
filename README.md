@@ -34,3 +34,6 @@ Run `vSNP_step1.py` on test files.
 
 cp *zc.vcf output from step 1 into their own working directory<br>
 Run `vSNP_step2.py`
+
+# Archived version:
+https://github.com/USDA-VS/vSNP_archive/tree/master/vSNP_version1
