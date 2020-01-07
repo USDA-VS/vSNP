@@ -1,9 +1,0 @@
-http://phaster.ca
-
-ref=""
-fetch-genomes-fasta.py ${ref%.fasta}
-nucmer --maxmatch --nosimplify --prefix=seq_seq $ref $ref
-show-coords -r seq_seq.delta > seq_seq.coords
-exact-tandems $ref 50 > seq.tandems
-awk '{print $1 "-" $1 + $2}' seq.tandems
-grep '100.00  |' seq_seq.coords | awk '{print $1 "-" $2}' | sort | uniq

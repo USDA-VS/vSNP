@@ -14,13 +14,13 @@ dependencies:
   - regex
   - pandas
   - pyvcf
-  - xlrd
   - xlsxwriter
   - bwa
   - samtools
   - picard
   - abyss
   - raxml
-  - newick_utils
+  - humanize
   - vcflib
-  - prettytable
+  - matplotlib
+  - xlrd
