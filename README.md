@@ -26,14 +26,13 @@ Change directory to vSNP and create vsnp conda environment.<br>
 `conda env create`<br>
 `conda activate vsnp`
 
-Download test files:<br>
-`git clone https://github.com/USDA-VS/fastq_data_set-tb_complex`
-
 Run `vSNP_step1.py -h` to see usage details.
 
 Run `vSNP_step1.py -t` to see "Mycobacterium_AF2122" available.
 
-If each sample is in their own directory, run `vSNP_step1.py -r1 *_R1*gz -r2 *_R2*gz` on each directory.
+Download test files:<br>
+`git clone https://github.com/USDA-VS/fastq_data_set-tb_complex`<br>
+Place each sample is in their own directory and run `vSNP_step1.py -r1 *_R1*gz -r2 *_R2*gz` on each directory.
 
 cp *zc.vcf output from step 1 into their own working directory.<br>
 Run `vSNP_step2.py` on this working directory.
