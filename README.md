@@ -10,13 +10,13 @@ Other than a FASTA file no other dependency file is required to run vSNP, but mo
 
 ![](./dependencies/directory_screen_shot.png)
 
-For example, running `path_adder.py -w /path/to/vsnp_dependencies` all subdirectories are accessible using the `-r` option.  `vSNP_step1.py -r1 *_R1*gz -r2 *R2*gz -r Mycobacterium_AF2122` will use NC_002945v4.fasta to align reads.  It is recommended the path to dependencies be placed on shared storage available to both compute resources and subject matter expert.
+For example, running `path_adder.py -w /full/path/to/vSNP_dependencies` (see below) all subdirectories are accessible using the `-r` option.  `vSNP_step1.py -r1 *_R1*gz -r2 *R2*gz -r Mycobacterium_AF2122` will use NC_002945v4.fasta to align reads.  It is recommended the path to dependencies be placed on shared storage available to both compute resources and subject matter expert.
 
-For more run detail use the `-h` option.
+For more run detail use `-h` option.
 
 # Quick Setup
 
-Installation expects user is familiar with the command-line, knows how to add directories to their PATH, and has installed conda.
+It is expected user is familiar with command-line basics, knows how to add directories to their PATH, and has installed conda.
 
 Download vSNP from https://github.com/USDA-VS/<br>
 `git clone https://github.com/USDA-VS/vSNP.git`
@@ -28,12 +28,14 @@ Change directory to vSNP and create vsnp conda environment.<br>
 Download test files:<br>
 `git clone https://github.com/USDA-VS/fastq_data_set-tb_complex`
 
-Run `vSNP_step1.py -t` to see "Mycobacterium_AF2122" is available
+Run `vSNP_step1.py -h` to see usage details.
 
-Run `vSNP_step1.py` on test files.
+Run `vSNP_step1.py -t` to see "Mycobacterium_AF2122" available.
 
-cp *zc.vcf output from step 1 into their own working directory<br>
-Run `vSNP_step2.py`
+If each sample is in their own directory, run `vSNP_step1.py -r1 *_R1*gz -r2 *_R2*gz` on each directory.
+
+cp *zc.vcf output from step 1 into their own working directory.<br>
+Run `vSNP_step2.py` on this working directory.
 
 Additional reference options can be added from GitHub repository.<br>
 `git clone https://github.com/USDA-VS/vSNP_dependencies.git`<br>
