@@ -19,7 +19,7 @@ For more run detail use the `-h` option.
 Installation expects user is familiar with the command-line, knows how to add directories to their PATH, and has installed conda.
 
 Download vSNP from https://github.com/USDA-VS/<br>
-`git clone https://github.com/USDA-VS/temp_vsnp.git`
+`git clone https://github.com/USDA-VS/vSNP.git`
 
 Change directory to vSNP and create vsnp conda environment.<br>
 `conda env create`<br>
@@ -34,6 +34,10 @@ Run `vSNP_step1.py` on test files.
 
 cp *zc.vcf output from step 1 into their own working directory<br>
 Run `vSNP_step2.py`
+
+Additional reference options can be added from GitHub repository.<br>
+`git clone https://github.com/USDA-VS/vSNP_dependencies.git`<br>
+`path_adder.py -w </full/path/to/vSNP_dependencies>`
 
 # Archived version:
 https://github.com/USDA-VS/vSNP_archive/tree/master/vSNP_version1
