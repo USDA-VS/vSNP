@@ -879,6 +879,8 @@ if __name__ == '__main__':
                 Must be in CHROM:POS format
                 POS numbers are allowed to have commas: both 1000 and 1,000 are accepted
                 POS number ranges can be be used.  Note: CHROM:POS number range conforms to IGV
+                
+    - vSNP comes installed with Mycobacterium_AF2122.  For additional reference options see: https://github.com/USDA-VS/vSNP_dependencies.git
 
     ---------------------------------------------------------
 

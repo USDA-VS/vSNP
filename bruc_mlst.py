@@ -154,7 +154,8 @@ if __name__ == "__main__": # execute if directly access by the interpreter
     parser = argparse.ArgumentParser(prog='PROG', formatter_class=argparse.RawDescriptionHelpFormatter, description=textwrap.dedent('''\
 
     ---------------------------------------------------------
-   
+    Based on https://bmcmicrobiol.biomedcentral.com/articles/10.1186/1471-2180-7-34
+
     '''), epilog='''---------------------------------------------------------''')
     
     parser.add_argument('-r1', '--read1', action='store', dest='read1', required=True, help='Required: single read')

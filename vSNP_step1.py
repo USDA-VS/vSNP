@@ -44,6 +44,7 @@ Dependencies:
             GBK (.gbk): used to annotate VCF files and tables.  <Optional>
             GFF (.gff): used by IGV to show annotation.  <Optional>
             IGV file: .genome IGV file mapping FASTA and GFF.  <Optional>
+    - vSNP comes installed with Mycobacterium_AF2122.  For additional reference options see: https://github.com/USDA-VS/vSNP_dependencies.git
 
 
 '''), epilog='''---------------------------------------------------------''')
