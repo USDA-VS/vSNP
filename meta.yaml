@@ -1,9 +1,9 @@
 {% set user = "USDA-VS" %}
 {% set name = "vSNP" %}
-{% set version = "0.9.8" %}
+{% set version = "0.2.0" %}
 
 package:
-  name: {{ name }}
+  name: {{ name|lower }}
   version: {{ version }}
 
 build:
@@ -12,6 +12,12 @@ build:
 
 source:
   url: https://github.com/{{ user }}/{{ name }}/archive/{{ version }}.tar.gz
+
+channels:
+  - conda-forge
+  - defaults
+  - bioconda
+  - r
 
 requirements:
   host:
