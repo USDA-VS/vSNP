@@ -1,0 +1,66 @@
+{% set user = "USDA-VS" %}
+{% set name = "vSNP" %}
+{% set version = "0.9.8" %}
+
+package:
+  name: {{ name }}
+  version: {{ version }}
+
+build:
+  number: 0
+  noarch: generic
+
+source:
+  url: https://github.com/{{ user }}/{{ name }}/archive/{{ version }}.tar.gz
+
+requirements:
+  host:
+  - python >=3.6
+  - biopython
+  - dask
+  - pysam
+  - freebayes
+  - regex
+  - pandas
+  - pyvcf
+  - xlsxwriter
+  - bwa
+  - samtools
+  - picard
+  - abyss
+  - raxml
+  - humanize
+  - vcflib
+  - matplotlib
+  - xlrd
+  
+  run:
+  - python >=3.6
+  - biopython
+  - dask
+  - pysam
+  - freebayes
+  - regex
+  - pandas
+  - pyvcf
+  - xlsxwriter
+  - bwa
+  - samtools
+  - picard
+  - abyss
+  - raxml
+  - humanize
+  - vcflib
+  - matplotlib
+  - xlrd
+
+  test:
+    commands:
+      - vSNP_step1.py -h
+
+about:
+  home: https://github.com/{{ user }}/{{ name }}
+  license: GPL3
+  license_file: LICENSE
+  summary: Rapidly call, validate, and compare SNPs from FASTQ files in a timely manner utilizing large data sets.
+  dev_url: https://github.com/USDA-VS/vSNP
