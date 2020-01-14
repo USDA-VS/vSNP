@@ -1,0 +1,5 @@
+/project/mycobacteria_brucella/brucella/vsnp_dependencies
+/project/mycobacteria_brucella/mycobacterium/vsnp_dependencies
+/Volumes/bioinfo/project/mycobacteria_brucella/brucella/vsnp_dependencies
+/project/diagnostic_virology_laboratory/MKillian/Analysis/results/newcastle/vSNP/vsnp_dependencies
+/project/bacterial_identification/streptococcus/vsnp_dependents
