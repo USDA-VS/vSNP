@@ -9,13 +9,18 @@ import regex
 import argparse
 import textwrap
 from collections import OrderedDict
+import multiprocessing
+multiprocessing.set_start_method('spawn', True)
+from concurrent import futures
 from dask import delayed
 from Bio.SeqIO.QualityIO import FastqGeneralIterator
 
 
 class Spoligo:
 
-    def __init__(self, read1, read2):
+    def __init__(self, read1, read2, debug=None):
+        self.debug = debug
+        self.cpu_count_half = int(multiprocessing.cpu_count() / 2)
         self.fastq_list = []
         for read in [read1, read2]:
             if read: #append if not None
@@ -72,15 +77,16 @@ class Spoligo:
         spoligo_dictionary["spacer43"] = ["CGCAGAATCGCACCGGGTGCGGGAG", "CTCCCGCACCCGGTGCGATTCTGCG"]
         self.spoligo_dictionary = spoligo_dictionary
 
-    def finding_sp(self, v):
-        total = 0
+    def finding_sp(self, spacer_sequence):
+        # spacer_id, spacer_sequence = spacer_id_and_spacer_sequence
+        total_count = 0
         total_finds = 0
         #if total < 6: # doesn't make a big different.  Might as well get full counts
         #total += sum(seq.count(x) for x in (v)) #v=list of for and rev spacer
-        total_finds = [len(regex.findall("(" + spacer + "){s<=1}", self.seq_string)) for spacer in v]
+        total_finds = [len(regex.findall("(" + spacer + "){s<=1}", self.seq_string)) for spacer in spacer_sequence]
         for number in total_finds:
-            total += number
-        return (total)
+            total_count += number
+        return (total_count)
 
     def binary_to_octal(self, binary):
         #binary_len = len(binary)
@@ -139,6 +145,17 @@ class Spoligo:
             #if < 100 then search all reads, not just those with repeat regions.
             seq_string = "".join(sequence_list)
         self.seq_string = seq_string
+        finding_sp = self.finding_sp
+        # if self.debug:
+        #     for spacer_id_and_spacer_sequence in self.spoligo_dictionary.items():
+        #         total_count, spacer_id = finding_sp(spacer_id_and_spacer_sequence)
+        #         count_summary.update({spacer_id: total_count})
+        # else:
+        #     spoligo_dictionary = self.spoligo_dictionary
+        #     cpu_count_half = self.cpu_count_half
+        #     with futures.ProcessPoolExecutor(max_workers=cpu_count_half) as pool:
+        #         for total_count, spacer_id in pool.map(finding_sp, spoligo_dictionary.items()):
+        #             count_summary.update({spacer_id: total_count})
         for spacer_id, spacer_sequence in self.spoligo_dictionary.items():
             count = delayed(self.finding_sp)(spacer_sequence)
             count_summary.update({spacer_id: count})
@@ -199,13 +216,14 @@ if __name__ == "__main__": # execute if directly access by the interpreter
     
     parser.add_argument('-r1', '--read1', action='store', dest='read1', required=True, help='Required: single read')
     parser.add_argument('-r2', '--read2', action='store', dest='read2', required=False, default=None, help='Optional: paired read')
+    parser.add_argument('-d', '--debug', action='store_true', dest='debug', default=False, help='turn off map.pooling of samples')
     parser.add_argument('-v', '--version', action='version', version=f'{os.path.abspath(__file__)}: version {__version__}')
 
     args = parser.parse_args()
     read1 = args.read1
     read2 = args.read2
 
-    spoligo = Spoligo(read1, read2)
+    spoligo = Spoligo(read1, read2, args.debug)
     spoligo.spoligo()
     
     print("Done")

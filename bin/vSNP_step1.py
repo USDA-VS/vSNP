@@ -114,7 +114,7 @@ except AttributeError:
         fq.get_quality()
         print(f'Printing FASTQ stats to excel')
         fq.excel_fastq_only_stats_out(f'{fq.sample_name}_fastq_stats.xlsx')
-        print(f'{args.reference} reference type not available, see available options:')
+        print(f'{args.reference} reference type not available, see options:')
         reference_options.print_options()
         sys.exit(0)  
 

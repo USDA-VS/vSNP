@@ -19,20 +19,23 @@ class Ref_Options:
     '''
 
     def __init__(self, select_ref=None):
+        all_ref_options = []
         script_path = os.path.dirname(os.path.realpath(__file__))
         self.script_path = script_path
         #don't use just the script path dependencies, but gather external dependency paths too
-        with open(f'{script_path}/../dependencies/dependency_paths.txt', 'r') as dep_paths:
+        ref_options_file = os.path.abspath(f'{script_path}/../dependencies/reference_options_paths.txt')
+        self.ref_options_file = ref_options_file
+        with open(f'{ref_options_file}', 'r') as dep_paths:
             dependency_paths = [line.strip() for line in dep_paths]
-        ref_options = glob.glob(f'{script_path}/../dependencies/dependencies/*')
         #the additional dependency paths point to more reference options
         for path in dependency_paths:
-            more_ref_options = glob.glob(f'{path}/*')
-            ref_options = ref_options + more_ref_options
-        for option in ref_options:
+            ref_options = glob.glob(f'{path}/*')
+            all_ref_options = all_ref_options + ref_options
+        all_ref_options = [x for x in all_ref_options if os.path.isdir(x)] #only capture directories
+        self.all_ref_options = all_ref_options
+        for option in all_ref_options:
             if select_ref == option.split('/')[-1]:
                 #if the asked for reference is a match grab files
-                # self.files_in_directory(f'{option}')
                 self.path = option
                 excel = glob.glob(f'{option}/*xlsx')
                 excel = [efile for efile in excel if not re.search('~\$*', efile)] #ignore opened files
@@ -93,20 +96,15 @@ class Ref_Options:
         print("")
 
     def print_options(self):
-        script_path = os.path.dirname(os.path.realpath(__file__))
-        with open(f'{script_path}/../dependencies/dependency_paths.txt', 'r') as dep_paths:
-            dependency_paths = [line.strip() for line in dep_paths]
-        ref_options = glob.glob(f'{script_path}/dependencies/*')
-        for path in dependency_paths:
-            more_ref_options = glob.glob(f'{path}/*')
-            ref_options = ref_options + more_ref_options
-        print(f'Reference Options:')
-        ref_options = [each_path for each_path in ref_options if not re.search('.*xlsx', each_path)] #remove excel files
-        ref_options = [each_path for each_path in ref_options if not re.search('.*png', each_path)] #remove png files
+        each_reference_option=[]
         print("\nReference option files available:")
-        for option in ref_options:
-            print(f'\t{os.path.split(option)[-1]}')
-        print("\n")
+        print(f'Path are listed here: {self.ref_options_file}')
+        for option in self.all_ref_options:
+            each_reference_option.append((f'\t{os.path.split(option)[-1]}'))
+        for each in sorted(each_reference_option):
+            print(each)
+        print("\nSee vsnp_path_adder.py -h for more information\n")
+        
         
 if __name__ == "__main__": # execute if directly access by the interpreter
 
@@ -121,3 +119,4 @@ if __name__ == "__main__": # execute if directly access by the interpreter
     args = parser.parse_args()
     select_ref = args.select_ref
     ro = Ref_Options(select_ref)
+    

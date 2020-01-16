@@ -356,7 +356,7 @@ class Get_Snps:
         # order before adding to file to match with ordering of individual samples below
         # all_positions is abs_pos:REF
         self.all_positions = OrderedDict(sorted(all_positions.items()))
-        ref_positions_df = pd.DataFrame(self.all_positions, index=['reference_seq'])
+        ref_positions_df = pd.DataFrame(self.all_positions, index=['root'])
         vcf_list = glob.glob(f'{sample_path_name}/*.vcf') #reset because some could have been deleted
         all_map_qualities = {}
         # print(f'Deciding which SNPs to keep from {len(vcf_list):,} samples...')
@@ -415,8 +415,8 @@ class Get_Snps:
 
     def get_parsimonious_pos(self, in_df):
         try:
-            ref_series = in_df.loc['reference_seq']
-            in_df = in_df.drop(['reference_seq']) #in all_vcf reference_seq needs to be removed
+            ref_series = in_df.loc['root']
+            in_df = in_df.drop(['root']) #in all_vcf root needs to be removed
         except KeyError:
             pass
         # print(f'in_df size: {in_df.shape}')
@@ -446,7 +446,7 @@ class Get_Snps:
         st = self.st
         if excel_path is None or self.no_filters:
             filtered_all_df = alignment
-            ref_series = filtered_all_df.loc['reference_seq']
+            ref_series = filtered_all_df.loc['root']
             sheet_names = None
         elif excel_path:
             #filter positions to be removed from all
@@ -456,7 +456,7 @@ class Get_Snps:
             exclusion_list_group = self.get_position_list(sheet_names, excel_path, directory) #Use the first column to filter "all" postions
             exclusion_list = exclusion_list_all + exclusion_list_group
             filtered_all_df = alignment.drop(columns=exclusion_list, errors='ignore')  #filters for all applied
-            # ref_series = filtered_all_df.loc['reference_seq']
+            # ref_series = filtered_all_df.loc['root']
             # print(f'{filtered_all_df.shape} Table size after filtering')
         parsimonious_df = self.get_parsimonious_pos(filtered_all_df)
         parsimonious_df.to_json(f'{sample_path_name}/{group}_filtered.json', orient='split')
@@ -467,7 +467,7 @@ class Get_Snps:
             with open(f'{sample_path_name}/TOO_FEW_SAMPLES_TO_BUILD_TREE', 'w') as message_out:
                 print(f'check sample numbers', file=message_out)
         else:
-            os.system(f'{raxml} -s {alignment_file} -n raxml -m GTRCATI -o reference_seq -w {sample_path_name} -p 456123 -T 4 > /dev/null 2>&1')
+            os.system(f'{raxml} -s {alignment_file} -n raxml -m GTRCATI -o root -w {sample_path_name} -p 456123 -T 4 > /dev/null 2>&1')
             try:
                 os.rename(f'{sample_path_name}/RAxML_bestTree.raxml', f'{sample_path_name}/{group}-{st}.tre')
                 # self.tree_to_svg(f'{sample_path_name}/{group}-{st}.tre', f'{sample_path_name}/{group}-{st}.svg')
@@ -595,10 +595,10 @@ class Get_Snps:
                 line = re.sub('[:,]', '\n', line)
                 line = re.sub('[)(]', '', line)
                 line = re.sub('[0-9].*\.[0-9].*\n', '', line)
-                line = re.sub('reference_seq\n', '', line)
+                line = re.sub('root\n', '', line)
         sample_order = line.split('\n')
         sample_order = list(filter(None, sample_order))
-        sample_order.insert(0, 'reference_seq')
+        sample_order.insert(0, 'root')
         tree_order = alignment.loc[sample_order]
             # count number of SNPs in each column
         snp_per_column = []
@@ -612,7 +612,7 @@ class Get_Snps:
             snp_per_column.append(count)
             #print("the count is: %s" % count)
         row1 = pd.Series(snp_per_column, tree_order.columns, name="snp_per_column")
-        #row1 = row1.drop('reference_seq')
+        #row1 = row1.drop('root')
 
         # get the snp count per column
         # for each column in the table
@@ -629,7 +629,7 @@ class Get_Snps:
                     break
             snp_from_top.append(count)
         row2 = pd.Series(snp_from_top, tree_order.columns, name="snp_from_top")
-        #row2 = row2.drop('reference_seq')
+        #row2 = row2.drop('root')
         tree_order = tree_order.append([row1])
         tree_order = tree_order.append([row2])
         #In pandas=0.18.1 even this does not work:
