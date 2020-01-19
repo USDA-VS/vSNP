@@ -39,6 +39,13 @@ class Add_Path:
         self.abspath = abspath
         self.added_directory = added_directory
 
+    #insure no blank lines are in file
+    def remove_blank_lines(self):
+        with open(f'{self.abspath}',"r") as open_file:
+            all_lines=open_file.readlines()
+        with open(f'{self.abspath}',"w") as write_back:  
+            [write_back.write(line) for line in all_lines if line.strip() ] 
+
     def add_to_path(self,):
         #append new path to file
         with open(f'{self.abspath}', 'a') as dep_paths:
@@ -74,16 +81,18 @@ if __name__ == "__main__": # execute if directly access by the interpreter
 
     parser = argparse.ArgumentParser(prog='PROG', formatter_class=argparse.RawDescriptionHelpFormatter, description=textwrap.dedent('''\
     ---------------------------------------------------------
-    If no -d option given just current paths are shown.
+    Using no arguments or -s option show the same output.
     '''), epilog='''---------------------------------------------------------''')
     
     parser.add_argument('-d', '--cwd', action='store', dest='directory', required=False, help='Absolute directory path to be added to find reference option files.')
+    parser.add_argument('-s', '--show', action='store_true', dest='show', required=False, help='Show available directories.')
     parser.add_argument('-v', '--version', action='version', version=f'{os.path.abspath(__file__)}: version {__version__}')
     args = parser.parse_args()
 
     if args.directory:
         directory = args.directory
         add_path = Add_Path(directory)
+        add_path.remove_blank_lines()
         if add_path.valid_path:
             add_path.add_to_path()
             add_path.show_options()
@@ -95,5 +104,9 @@ if __name__ == "__main__": # execute if directly access by the interpreter
     else:
         print(f'\nNO NEW DIRECTORY ADDED\nONLY SHOWING WHAT IS CURRENTLY AVAILABLE')
         add_path = Add_Path(None)
-        add_path.show_options()
-        print(f'\nPaths files can be manually edited here: {add_path.abspath}\n')
+        add_path.remove_blank_lines()
+        if os.stat(f'{add_path.abspath}').st_size == 0:
+            print(f'\nPaths have not been added.  File is empty. \nAdd path using -d option.\nSee -h for more options\n\t{add_path.abspath}\n')
+        else:
+            add_path.show_options()
+            print(f'\nPaths files can be manually edited here: {add_path.abspath}\n')

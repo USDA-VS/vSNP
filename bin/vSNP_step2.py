@@ -24,6 +24,7 @@ import textwrap
 import vcf
 from Bio import SeqIO
 from Bio import Phylo
+from cpuinfo import get_cpu_info
 import pylab
 
 from vsnp_reference_options import Ref_Options
@@ -53,34 +54,6 @@ class Get_Snps:
         get_snps() --> return
             find_initial_position() --> return
     '''
-    def find_raxml(self):
-        # IF AVX2 IS AVAILABE (CHECK WITH `cat /proc/cpuinfo | grep -i "avx"`). CREATE A LINK TO: `ln -s path_to_raxmlHPC-PTHREADS-AVX2 raxml.  Place "raxml" in your path.  This will allow "raxml" to be found first which will call AVX2 version of RAxML
-        try:
-            subprocess.call("raxml", stdout=open(os.devnull, 'wb'))
-            sys_raxml = "raxml"
-            #print("%s found" % sys_raxml)
-        except OSError:
-            print("looking for RAxML")
-            try:
-                subprocess.call("raxmlHPC-PTHREADS")
-                sys_raxml = "raxmlHPC-PTHREADS"
-                print("%s found" % sys_raxml)
-            except OSError:
-                try:
-                    subprocess.call("raxmlHPC-SSE3")
-                    sys_raxml = "raxmlHPC-SSE3"
-                    print("%s found" % sys_raxml)
-                except OSError:
-                    print("looking for RAxML")
-                    try:
-                        subprocess.call("raxmlHPC")
-                        sys_raxml = "raxmlHPC"
-                        print("RAxML found")
-                    except OSError:
-                        print("#####RAxML is not in you PATH")
-                        print("conda install raxml")
-                        sys.exit(0)
-        return sys_raxml
 
     def __init__(self, reference=None, working_directory='.', gbk=None, filter_finder=False, debug=False, no_filters=False, all_vcf=False, table=False, qual_threshold=150, MQ=56, AC=2, N_threshold=50):
         if working_directory == '.':
@@ -155,6 +128,27 @@ class Get_Snps:
             self.all_vcf = True
             self.excel_path = None
             print("Continuing...")
+        
+        '''
+        Find an optimal compiled version of RAxML in conda
+        '''
+        cpu_info_dict = get_cpu_info()
+        flags_list = cpu_info_dict["flags"]
+        try:
+            subprocess.call("raxml", stdout=open(os.devnull, 'wb'))
+            raxml = 'raxml'
+        except OSError:
+            if 'avx2' in flags_list:
+                print(f'AVX2 available')
+                raxml = 'raxmlHPC-PTHREADS-AVX2'
+            elif 'sse3' in flags_list:
+                print(f'SSE3 available')
+                raxml = 'raxmlHPC'
+            else:
+                print(f'Neither SSE3 or AVX2 are available')
+                raxml = 'raxmlHPC'
+            print(f'set RAxML to {raxml}')
+        self.raxml = raxml
 
     def zipit(self, src, dst):
         zf = zipfile.ZipFile("%s.zip" % (dst), "w", zipfile.ZIP_DEFLATED)
@@ -442,7 +436,7 @@ class Get_Snps:
         else:
             sample_path_name = f'{self.sample_path_name}/{directory}'
         group = directory
-        raxml = self.find_raxml()
+        raxml = self.raxml
         st = self.st
         if excel_path is None or self.no_filters:
             filtered_all_df = alignment
