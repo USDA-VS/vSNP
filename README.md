@@ -32,7 +32,11 @@ It is expected the setup user is familiar with the command-line and can installe
 Follow conda install instructions:<br>
 https://bioconda.github.io/user/install.html#set-up-channels
 
-After adding channels:<br>
+After adding channels make sure you are not working in base.<br>
+Make new environment if needed.<br>
+`conda create --name myenv`
+
+Install:<br>
 `conda install vsnp`
 
 Run `vSNP_step1.py -h` to see usage details.
