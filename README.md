@@ -30,10 +30,10 @@ For more run detail use `-h` option.
 It is expected the setup user is familiar with the command-line and can installed conda.
 
 Follow conda install instructions:<br>
-https://bioconda.github.io/user/install.html#set-up-channels
+https://bioconda.github.io/user/install.html#set-up-channels<br>
+Channel setup is important.<br>
 
-After adding channels make sure you are not working in base.<br>
-Make new environment if needed.<br>
+Do not work in base.  If needed make new environmnet.<br>
 `conda create --name myenv`
 
 Install:<br>
