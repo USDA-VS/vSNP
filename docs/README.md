@@ -1,23 +1,32 @@
 # vSNP_step1.py run recommendations
 
+Contact your system administrator for optimizing compute resources.  If help is not available the below is meant to provide guidance.  Step 1 simply takes input for a single sample.  It is up to the user to run samples to maximize their compute resources.
+
 See `vSNP_step1.py -h` for basic usage
 
-Step 1 simply takes input for a single sample.  It is up to the user to run samples in the context of their compute environment to maximize resources.  Below are recommendations.
+## Multiple sample run guidance
 
-## Group sample into their own working directories
-`for i in *.fastq.gz; do n=$(echo $i | sed 's/[._].*//'); mkdir -p $n; mv -v $i $n/; done`
+In directory containing multiple FASTQ.gz files:<br>
+`for fastq in *.fastq.gz; do name=$(echo $fastq | sed 's/[._].*//'); mkdir -p $name; mv -v $fastq $name/; done`
 
-If after grouping there are few enough samples to be handled at one time then the following could be used to run all samples at once.
+Check that samples grouped as expected:<br>
+`ls *`
 
-`currentdir=$(pwd); for f in ./*/; do echo "starting: $f; cd ./$f; vSNP_step1.py -r1 *_R1*.fastq.gz -r2 *_R2*.fastq.gz -r <reference FASTA/option> & cd $currentdir; done`
+In Bash one way to get the number of computer cores available is:  `getconf _NPROCESSORS_ONLN`<br>
+Dividing this number by 6 can be a good starting point for optimizing resources for vSNP.  For example if 24 cores are available, 24/6=4, set NUM_PER_CYCLE=4
 
-Or if the reference option will be Mycobactium tuberculosis complex and/or Brucella species no `-r` option is required.  Also a mix of option types can be ran together.
+`NUM_PER_CYCLE=4; starting_dir=$(pwd); for dir in ./*/; do (echo "starting: $dir"; cd ./$dir; vSNP_step1.py -r1 *_R1*.fastq.gz -r2 *_R2*.fastq.gz; cd $starting_dir) & let count+=1; [[ $((count%NUM_PER_CYCLE)) -eq 0 ]] && wait; done`
 
-`currentdir=$(pwd); for f in ./*/; do echo "starting: $f; cd ./$f; vSNP_step1.py -r1 *_R1*.fastq.gz -r2 *_R2*.fastq.gz & cd $currentdir; done`
+Provide `-r` option to the above if needed.  When no `-r` is used Mycobacterium TB complex and Brucella species can be called together.  Just make sure references get properly sorted for step 2.
 
-The examples above will not work if only small amount of compute is available or many (>5) samples are ran.  In these cases bash scripts are recommended.  Example scripts are available above as examples.  Your system administrar will often want to help in situtations when maximizing compute resources, and will be able to answer system specific questions.
+## HPC
 
-`vSNP_step1_batch_script.sh` 
+If HPC resources are available talk to your system administrator to utilize multiple nodes.  Some example batch scripts are provided.
 
-After running multiple samples it is convenient to see all stats in a single file.  In working directory containing subdirectories of multiple samples.<br>
-`mkdir stats; find . -name "*stat*xlsx" -exec cp -v {} stats \;; excel_append_files.py`
+`vSNP_step1_batch_script.sh` batch script to run a specified number of samples at once.
+`hpc_vSNP_step1_new.sh` script to sort samples into directories and run a batch script on each directory.
+
+## Collection stats
+
+It is convenient after running multiple samples to see all stats in a single file.  In working directory containing all subdirectories of the multiple samples.<br>
+`mkdir stats; find . -name "*stat*xlsx" -exec cp -v {} stats \;; cd stats; excel_append_files.py`

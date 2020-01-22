@@ -41,6 +41,8 @@ Install:<br>
 
 Run `vSNP_step1.py -h` to see usage details.
 
+[macOS](./doc/macOS_special_instructions.md) users may need to follow these special instructions for samtools.
+
 Download and add reference options.  It is recommended options be placed on storage accessible to both compute resources and subject matter expert.<br>
 `git clone https://github.com/USDA-VS/vSNP_reference_options.git`
 
@@ -48,7 +50,8 @@ Use `vsnp_path_adder.py` to add options.  See `vsnp_path_adder.py -h` for help.
 
 Download test files:<br>
 `git clone https://github.com/USDA-VS/fastq_data_set-tb_complex`<br>
-Place each sample is in their own directory and run `vSNP_step1.py -r1 *_R1*gz -r2 *_R2*gz` on each directory.
+Place each sample is in their own directory and run `vSNP_step1.py -r1 *_R1*gz -r2 *_R2*gz` on each directory.<br>
+See [help](./docs/README.md) running multiple samples at once.
 
 cp *zc.vcf output from step 1 into their own directory.<br>
 Run `vSNP_step2.py` on this directory.
