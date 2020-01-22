@@ -50,8 +50,9 @@ Use `vsnp_path_adder.py` to add options.  See `vsnp_path_adder.py -h` for help.
 
 Download test files:<br>
 `git clone https://github.com/USDA-VS/fastq_data_set-tb_complex`<br>
-Place each sample is in their own directory and run `vSNP_step1.py -r1 *_R1*gz -r2 *_R2*gz` on each directory.<br>
-See [help](./docs/README.md) running multiple samples at once.
+Place each sample is in their own directory and run `vSNP_step1.py -r1 *_R1*gz -r2 *_R2*gz` on each directory.
+
+See [help](./docs/run_guidance.md) running multiple samples at one time.
 
 cp *zc.vcf output from step 1 into their own directory.<br>
 Run `vSNP_step2.py` on this directory.

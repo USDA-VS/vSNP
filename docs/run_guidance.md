@@ -23,7 +23,7 @@ Provide `-r` option to the above if needed.  When no `-r` is used Mycobacterium 
 
 If HPC resources are available talk to your system administrator to utilize multiple nodes.  Some example batch scripts are provided.
 
-`vSNP_step1_batch_script.sh` batch script to run a specified number of samples at once.
+`vSNP_step1_batch_script.sh` batch script to run a specified number of samples at once.<br>
 `hpc_vSNP_step1_new.sh` script to sort samples into directories and run a batch script on each directory.
 
 ## Collection stats
