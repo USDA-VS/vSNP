@@ -41,7 +41,7 @@ Install:<br>
 
 Run `vSNP_step1.py -h` to see usage details.
 
-[macOS](./doc/macOS_special_instructions.md) users may need to follow these special instructions for samtools.
+[macOS](./docs/macOS_special_instructions.md) users may need to follow these special instructions for samtools.
 
 Download and add reference options.  It is recommended options be placed on storage accessible to both compute resources and subject matter expert.<br>
 `git clone https://github.com/USDA-VS/vSNP_reference_options.git`
