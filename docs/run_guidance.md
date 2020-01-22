@@ -36,7 +36,7 @@ If HPC resources are available talk to your system administrator to utilize mult
 `vSNP_step1_batch_script.sh` batch script to run a specified number of samples at once.<br>
 `hpc_vSNP_step1_new.sh` script to sort samples into directories and run a batch script on each directory.
 
-## Collection stats
+## Collect stats
 
 It is convenient after running multiple samples to see all stats in a single file.  In working directory containing all subdirectories of the multiple samples.<br>
 
