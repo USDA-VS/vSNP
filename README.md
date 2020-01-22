@@ -44,7 +44,7 @@ Run `vSNP_step1.py -h` to see usage details.
 Download and add reference options.  It is recommended options be placed on storage accessible to both compute resources and subject matter expert.<br>
 `git clone https://github.com/USDA-VS/vSNP_reference_options.git`
 
-Use `vsnp_path_adder.py` to add options.  See `vsnp_path_adder -h` for help.
+Use `vsnp_path_adder.py` to add options.  See `vsnp_path_adder.py -h` for help.
 
 Download test files:<br>
 `git clone https://github.com/USDA-VS/fastq_data_set-tb_complex`<br>
