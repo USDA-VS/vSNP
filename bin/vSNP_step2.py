@@ -143,7 +143,7 @@ class Get_Snps:
                 raxml = 'raxmlHPC-PTHREADS-AVX2'
             elif 'sse3' in flags_list:
                 print(f'SSE3 available')
-                raxml = 'raxmlHPC'
+                raxml = 'raxmlHPC-PTHREADS-SSE3'
             else:
                 print(f'Neither SSE3 or AVX2 are available')
                 raxml = 'raxmlHPC'
