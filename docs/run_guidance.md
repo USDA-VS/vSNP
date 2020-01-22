@@ -15,7 +15,12 @@ for fastq in *.fastq.gz; do name=$(echo $fastq | sed 's/[._].*//'); mkdir -p $na
 Check that samples grouped as expected:<br>
 `ls *`
 
-In Bash one way to get the number of computer cores available is:  `getconf _NPROCESSORS_ONLN`<br>
+In Bash, one way to get the number of computer cores available is:
+
+```bash
+getconf _NPROCESSORS_ONLN
+```
+
 Dividing this number by 6 can be a good starting point for optimizing resources for vSNP.  For example if 24 cores are available, 24/6=4, set NUM_PER_CYCLE=4
 
 ```bash

@@ -44,23 +44,36 @@ Follow conda install instructions:<br>
 https://bioconda.github.io/user/install.html#set-up-channels<br>
 Channel setup is important.<br>
 
-Do not work in base.  If needed make new environmnet.<br>
-`conda create --name myenv`
+Do not work in base.  If needed make new environmnet.
 
-Install:<br>
-`conda install vsnp`
+```bash
+conda create --name myenv
+```
+
+Install:
+
+```bash
+conda install vsnp
+```
 
 Run `vSNP_step1.py -h` to see usage details.
 
 [macOS](./docs/macOS_special_instructions.md) users may need to follow these special instructions for samtools.
 
-Download and add reference options.  It is recommended options be placed on storage accessible to both compute resources and subject matter expert.<br>
-`git clone https://github.com/USDA-VS/vSNP_reference_options.git`
+Download and add reference options.  It is recommended options be placed on storage accessible to both compute resources and subject matter expert.
+
+```bash
+git clone https://github.com/USDA-VS/vSNP_reference_options.git
+```
 
 Use `vsnp_path_adder.py` to add options.  See `vsnp_path_adder.py -h` for help.
 
-Download test files:<br>
-`git clone https://github.com/USDA-VS/fastq_data_set-tb_complex`<br>
+Download test files:
+
+```bash
+git clone https://github.com/USDA-VS/fastq_data_set-tb_complex
+```
+
 Place each sample in their own directory and on each directory run:
 
 ```bash
