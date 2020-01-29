@@ -2,10 +2,10 @@
 
 ## vSNP -- validate SNPs
 
-### Whole genome sequencing for disease tracing and outbreak investigations is routinely required for high consequence diseases.  vSNP is an accreditation-friendly and robust tool, designed for easy error correction and validation of SNP calls. vSNP rapidly generates annotated SNP tables and corresponding  phylogenetic trees that can be easily sized and scaled for reporting purposes.   It is able to process large scale datasets, and it can easily accommodate multiple references efficiently.
+### Whole genome sequencing for disease tracing and outbreak investigations is routinely required for high consequence diseases.  vSNP is an accreditation-friendly and robust tool, designed for easy error correction and SNP validation. vSNP rapidly generates annotated SNP tables and corresponding  phylogenetic trees that can be easily scaled for reporting purposes.   It is able to process large scale datasets, and efficiently accommodates multiple references.
 
 ### Features:
-* Allows for the creation of customized groups by specified SNP position(s).
+* Allows for the creation of customized groups utilizing user specified SNPs.
 * Functionality to filter desired SNP positions by group or for all groups.
 * Two types of output:
   1. A spreadsheet, or SNP table containing SNP calls sorted in evolutionary order with annotation and genome position information.
@@ -15,31 +15,12 @@
 
 vSNP is a 2-step process for efficiency.
 
-1. `vSNP_step1.py` takes single or paired FASTQ files and either a FASTA or directory name containing a FASTA (see vsnp_path_adder.py below) as a reference. For Mycobacterium tuberculosis complex and Brucella species, if no FASTA file or directory name is provided a "best reference" is automatically selected.
+1. `vSNP_step1.py` takes as input single or paired FASTQ files and either a reference FASTA or directory name containing the reference FASTA (see vsnp_path_adder.py below). For Mycobacterium tuberculosis complex and Brucella species, if no FASTA file or directory name is provided a "best reference" is automatically selected
 
 
-   NOTE: It is only necessary to process each set of raw data once for each reference.  The VCF file from Step 1 can be saved for future analyses with additional samples with Step 2.  It is recommended to place VCF files generated with a single reference into a directory to compile a dataset for future analyses. Only VCF files generated from the same reference can be compared in Step 2.  See recommended directory structure for step 1 and 2 output below.
-2. `vSNP_step2.py` builds SNP tables and corresponding phylogenetic trees when ran on a directory containing a collection of zc.vcf files output from step 1. Step 2 is able to handle large datasets with thousands of VCF files, outputting detailed comparisons in minutes.
+   NOTE: It is only necessary to process each set of raw data once for each reference.  The VCF file from Step 1is saved for future analyses with additional samples in Step 2.  It is recommended that VCFs generated with a single reference be placed in a single directory to facilitate future analysis. Only VCF files generated from the same reference can be compared in Step 2.
+2. `vSNP_step2.py` builds SNP tables and corresponding phylogenetic trees from a directory containing a collection of zc.vcf files output from step 1. Step 2 will handle large datasets with thousands of VCF files, outputting detailed comparisons in minutes.
 
-Except for a FASTA file, no other dependency file is required to run vSNP.  However, other files are recommended. The additional dependency file that is most recommended is an Excel file containing defining SNPs and filters. This will allow for the creation of custom groups.  A template is provided at `dependencies/template_defining_filter.xlsx`.
-
-`vsnp_path_adder.py` is used to direct vSNP to a directory containing reference options.
-
-![](./dependencies/directory_screen_shot.png)
-
-For example, after running the following all subdirectories are accessible using the `-r` option.  
-
-```bash
-vsnp_path_adder.py -d /full/path/to/vSNP_referenece_options
-```
-
-```bash
-vSNP_step1.py -r1 *_R1*gz -r2 *_R2*gz -r Mycobacterium_AF2122
-```
-
-It is recommended the path to reference options be placed on shared storage available to both compute resources and subject matter expert.
-
-For more run detail use `-h` option.
 
 # Quick Setup
 
@@ -66,10 +47,26 @@ Run `vSNP_step1.py -h` to see usage details.
 
 [macOS](./docs/macOS_special_instructions.md) users may need to follow these special instructions for Samtools.
 
-Download and add reference options.  It is recommended options be placed on storage accessible to both compute resources and subject matter experts analyzing the output data.
+Download and add reference options. It is recommended that reference options be placed on storage accessible to both computing resources and subject matter experts analyzing the output data.
 
 ```bash
 git clone https://github.com/USDA-VS/vSNP_reference_options.git
+```
+
+Except for a reference FASTA file, no other dependency file is required to run vSNP.  However, other files are recommended to add additional functionality to the script. For example, Excel file containing defining SNPs and filters will allow for the creation of custom subgroups.  A template is provided at `dependencies/template_defining_filter.xlsx`.
+
+`vsnp_path_adder.py` is used to direct vSNP to a directory containing reference options.
+
+![](./dependencies/directory_screen_shot.png)
+
+For example, after running the following all subdirectories are accessible using the `-r` option.  
+
+```bash
+vsnp_path_adder.py -d /full/path/to/vSNP_referenece_options
+```
+
+```bash
+vSNP_step1.py -r1 *_R1*gz -r2 *_R2*gz -r Mycobacterium_AF2122
 ```
 
 Use `vsnp_path_adder.py` to add options.  See `vsnp_path_adder.py -h` for help.
