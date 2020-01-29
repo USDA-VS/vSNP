@@ -6,7 +6,7 @@ A new conda install on macOS consistently causes the following error when first 
 
 The fix is found [here](https://github.com/samtools/samtools/issues/974).
 
-In summary... while in your non-base conda env run the following:
+In summary... while in your non-base conda environment run the following:
 
 ```bash
 conda uninstall samtools

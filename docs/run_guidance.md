@@ -21,7 +21,7 @@ In Bash, one way to get the number of computer cores available is:
 getconf _NPROCESSORS_ONLN
 ```
 
-Dividing this number by 6 can be a good starting point for optimizing resources for vSNP.  For example if 24 cores are available, 24/6=4, set NUM_PER_CYCLE=4
+Dividing this number by 6 can be a good starting point for optimizing resources for `vSNP_step1.py`.  For example if 24 cores are available, 24/6=4, set NUM_PER_CYCLE=4
 
 ```bash
 NUM_PER_CYCLE=4; starting_dir=$(pwd); for dir in ./*/; do (echo "starting: $dir"; cd ./$dir; vSNP_step1.py -r1 *_R1*.fastq.gz -r2 *_R2*.fastq.gz; cd $starting_dir) & let count+=1; [[ $((count%NUM_PER_CYCLE)) -eq 0 ]] && wait; done
@@ -31,7 +31,7 @@ Provide `-r` option to the above if needed.  When no `-r` is used Mycobacterium 
 
 ## HPC
 
-If HPC resources are available talk to your system administrator to utilize multiple nodes.  Some example batch scripts are provided.
+If HPC resources are available talk to your system administrator to utilize multiple nodes.  Example batch scripts are provided.
 
 `vSNP_step1_batch_script.sh` batch script to run a specified number of samples at once.<br>
 `hpc_vSNP_step1_new.sh` script to sort samples into directories and run a batch script on each directory.
