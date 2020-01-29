@@ -47,17 +47,15 @@ Run `vSNP_step1.py -h` to see usage details.
 
 [macOS](./docs/macOS_special_instructions.md) users may need to follow these special instructions for Samtools.
 
+Except for a reference FASTA file, no other dependency file is required to run vSNP.  However, other files are recommended to add additional functionality to the script. For example, Excel file containing defining SNPs and filters will allow for the creation of custom subgroups.  A template is provided at `dependencies/template_defining_filter.xlsx`.
+
 Download and add reference options. It is recommended that reference options be placed on storage accessible to both computing resources and subject matter experts analyzing the output data.
 
 ```bash
 git clone https://github.com/USDA-VS/vSNP_reference_options.git
 ```
 
-Except for a reference FASTA file, no other dependency file is required to run vSNP.  However, other files are recommended to add additional functionality to the script. For example, Excel file containing defining SNPs and filters will allow for the creation of custom subgroups.  A template is provided at `dependencies/template_defining_filter.xlsx`.
-
-`vsnp_path_adder.py` is used to direct vSNP to a directory containing reference options.
-
-![](./dependencies/directory_screen_shot.png)
+Use `vsnp_path_adder.py` to add options.  See `vsnp_path_adder.py -h` for help.
 
 For example, after running the following all subdirectories are accessible using the `-r` option.  
 
@@ -65,11 +63,12 @@ For example, after running the following all subdirectories are accessible using
 vsnp_path_adder.py -d /full/path/to/vSNP_referenece_options
 ```
 
+![](./dependencies/directory_screen_shot.png)
+
+
 ```bash
 vSNP_step1.py -r1 *_R1*gz -r2 *_R2*gz -r Mycobacterium_AF2122
 ```
-
-Use `vsnp_path_adder.py` to add options.  See `vsnp_path_adder.py -h` for help.
 
 Download test files:
 
