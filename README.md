@@ -25,9 +25,9 @@ vSNP is a 2-step process for efficiency.
 
 # Setup
 
-### Installing vSNP
+### Installing vSNP:
 
-It is expected the setup user is familiar with the command-line and can installed conda.
+It is expected the setup user is familiar with the command-line and can install conda.
 
 Follow conda installation instructions:<br>
 https://bioconda.github.io/user/install.html#set-up-channels<br>
