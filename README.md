@@ -105,5 +105,9 @@ Recommended directory structure for step 1 and 2 output:
 
 ![](./dependencies/step2_screenshot.png)
 
+### Utility Scripts:
+
+Descriptions for additional vSNP [utility scritps](./docs/utilities.md).
+
 # Archived version:
 https://github.com/USDA-VS/vSNP_archive/tree/master/vSNP_version1
