@@ -91,7 +91,7 @@ vSNP_step1.py -r1 *_R1*gz -r2 *_R2*gz
 
 See [help](./docs/run_guidance.md) running multiple samples at once.
 
-Copy *zc.vcf output from step 1 into a directory for step 2. Only samples compared to the same reference can be analyzed together in step 2.<br>
+Copy `*zc.vcf` output from step 1 into a directory for step 2. Only samples compared to the same reference can be analyzed together in step 2.<br>
 
 Run `vSNP_step2.py` on this directory.
 
