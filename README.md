@@ -107,7 +107,7 @@ Recommended directory structure for step 1 and 2 output:
 
 ### Utility Scripts:
 
-Descriptions for additional vSNP [utility scritps](./docs/utilities.md).
+Descriptions for additional vSNP [utility scripts](./docs/utilities.md).
 
 # Archived version:
 https://github.com/USDA-VS/vSNP_archive/tree/master/vSNP_version1
