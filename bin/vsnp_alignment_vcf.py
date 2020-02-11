@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-__version__ = "0.2.01"
+__version__ = "2.0.0"
 
 import os
 import sys
@@ -24,6 +24,8 @@ from Bio import SeqIO
 from vsnp_fastq_quality import FASTQ_Quality
 from vsnp_spoligotype import Spoligo
 from vsnp_bruc_mlst import Bruc_MLST
+from vsnp_chromosome_reference import Reference_Chromosome
+from vsnp_group_reporter import GroupReporter
 
 def print_options():
     script_path = os.path.dirname(os.path.realpath(__file__))
@@ -367,6 +369,16 @@ class Align_Reads:
             os.remove(file)
             shutil.move(f'{file}.gz', 'unmapped_reads')
             
+        reference_type = Reference_Chromosome(self.root_dir)
+        ref_option = reference_type.get_reference()
+        print(f'Reference type found: {ref_option}\n')
+        if ref_option:
+            group_reporter = GroupReporter(zero_coverage_vcf, ref_option)
+            group_list = group_reporter.get_groups()
+            group_string = ", ".join(str(x) for x in group_list)
+        else:
+            group_string = 'Unable to cross-reference chrom, check vsnp_chromosome_reference.py'
+
         os.makedirs('alignment')
         files_grabbed = [glob.glob(e) for e in ['*bam', '*bam.bai', '*vcf', '*fasta', '*fasta.fai']]
         for file_list in files_grabbed:
@@ -381,7 +393,7 @@ class Align_Reads:
         print(f'\n{self.sample_name} alignment/VCF runtime: {runtime}\n')
 
         #stats to excel
-        df = pd.DataFrame(index=[fq.sample_name], columns=['Reference', 'Read1 FASTQ', 'Read1 File Size', 'Read1 Total Reads', 'Read1 Mean Read Length', 'Read1 Mean Read Quality', 'Read1 Reads Passing Q30', 'Read2 FASTQ', 'Read2 File Size', 'Read2 Total Reads', 'Read2 Mean Read Length', 'Read2 Mean Read Quality', 'Read2 Reads Passing Q30', 'Total Reads', 'All Mapped Reads', 'Reference with Coverage', 'Average Depth of Coverage', 'Unmapped Reads', 'Unmapped Assembled Contigs', 'Good SNP Count', 'TB Spoligo Octal Code', 'Bovis SB Code', 'Brucella MLST'])
+        df = pd.DataFrame(index=[fq.sample_name], columns=['Reference', 'Read1 FASTQ', 'Read1 File Size', 'Read1 Total Reads', 'Read1 Mean Read Length', 'Read1 Mean Read Quality', 'Read1 Reads Passing Q30', 'Read2 FASTQ', 'Read2 File Size', 'Read2 Total Reads', 'Read2 Mean Read Length', 'Read2 Mean Read Quality', 'Read2 Reads Passing Q30', 'Total Reads', 'All Mapped Reads', 'Reference with Coverage', 'Average Depth of Coverage', 'Unmapped Reads', 'Unmapped Assembled Contigs', 'Good SNP Count', 'Group Placements', 'Bovis SB Code', 'Brucella MLST'])
         if self.species:
             reference = self.species
         else:
@@ -420,12 +432,11 @@ class Align_Reads:
         except ValueError:
             df.at[fq.sample_name, 'Unmapped Assembled Contigs'] = f'Count not given'
         df.at[fq.sample_name, 'Good SNP Count'] = f'{self.good_snp_count:,}'
+        df.at[fq.sample_name, 'Group Placements'] = f'{group_string}'
         if self.group == 'TB':
-            df.at[fq.sample_name, 'TB Spoligo Octal Code'] = f'octal: {spoligo.octal}'
             df.at[fq.sample_name, 'Bovis SB Code'] = f'{spoligo.sbcode}'
             df.at[fq.sample_name, 'Brucella MLST'] = f'Not Applicable'
         elif self.group == 'Brucella':
-            df.at[fq.sample_name, 'TB Spoligo Octal Code'] = f'Not Applicable'
             df.at[fq.sample_name, 'Bovis SB Code'] = f'Not Applicable'
             df.at[fq.sample_name, 'Brucella MLST'] = f'{mlst.mlst_type}'
         else:

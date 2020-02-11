@@ -487,9 +487,13 @@ class Get_Snps:
         defsnp_iterator = iter(defining_snps.iteritems())
         next(defsnp_iterator)
         defining_snps={}
+        inverted_defining_snps={}
         for abs_pos, group in defsnp_iterator:
             group_names.append(group)
-            defining_snps[abs_pos] = group #Make defining snp/group dict
+            if '!' in abs_pos:
+                inverted_defining_snps[abs_pos.replace('!', '')] = group
+            else:
+                defining_snps[abs_pos] = group #Make defining snp/group dict
         vcf_list = glob.glob(f'{sample_path_name}/*.vcf')
         pre_vcf_list_size = len(vcf_list)
         for filename in vcf_list:
@@ -502,72 +506,60 @@ class Get_Snps:
         count = 0
         samples_groups_dict = {}
         gather_mal_list = []
-        if self.debug:
-            for filename in vcf_list:
-                filename, mal, found_positions, found_positions_mix = find_initial_positions(filename)
-                sample_groups_list = []
-                count += 1
-                if mal:
-                    samples_groups_dict[filename] = ['<font color="red">Rejected VCF file</font>']
-                    gather_mal_list = gather_mal_list + mal
-                else:
-                    try:
-                        for abs_position in list(defining_snps.keys() & (found_positions.keys() | found_positions_mix.keys())): #absolute positions in set union of two list
-                            # print(f'{defining_snps[abs_position]}: {filename}')
+        def bin_and_html_table(filename, mal, found_positions, found_positions_mix, count):
+            sample_groups_list = []
+            gather_mal_list = []
+            tablename = os.path.basename(filename)
+            if mal:
+                samples_groups_dict[tablename] = ['<font color="red">Rejected VCF file</font>']
+                gather_mal_list = gather_mal_list + mal
+            else:
+                try:
+                    defining_snp = False
+                    for abs_position in list(defining_snps.keys() & (found_positions.keys() | found_positions_mix.keys())): #absolute positions in set union of two list
+                        # print(f'{defining_snps[abs_position]}: {filename}')
+                        sys.stdout.write("\r%i VCF files moved" % count)
+                        sys.stdout.flush()
+                        group = defining_snps[abs_position]
+                        group_directory = f'{sample_path_name}/{group}'
+                        sample_groups_list.append(group)
+                        if len(list(defining_snps.keys() & found_positions_mix.keys())) > 0:
+                            tablename = f'{os.path.basename(filename)} <font color="red">[[MIXED]]</font>'
+                        if not os.path.exists(group_directory):
+                            os.makedirs(group_directory)
+                        shutil.copy(filename, group_directory)
+                        defining_snp = True
+                    if not set(inverted_defining_snps.keys()).intersection(found_positions.keys() | found_positions_mix.keys()):
+                        for abs_position in list(inverted_defining_snps.keys()):
                             sys.stdout.write("\r%i VCF files moved" % count)
                             sys.stdout.flush()
-                            group = defining_snps[abs_position]
+                            group = inverted_defining_snps[abs_position]
                             group_directory = f'{sample_path_name}/{group}'
                             sample_groups_list.append(group)
                             if not os.path.exists(group_directory):
                                 os.makedirs(group_directory)
                             shutil.copy(filename, group_directory)
-                        if len(list(defining_snps.keys() & found_positions_mix.keys())) > 0:
-                            filename=f'{os.path.basename(filename)} <font color="red">[[MIXED]]</font>'
-                        else:
-                            filename=f'{os.path.basename(filename)}'
-                        if sample_groups_list:
-                            samples_groups_dict[filename] = sorted(sample_groups_list)
-                        else:
-                            samples_groups_dict[filename] = ['<font color="red">No defining SNP</font>']
-                    except TypeError:
-                        message = f'File TypeError'
-                        print(f'{message}: {filename}')
-                        samples_groups_dict[filename] = ["laskdjflkasdjfkladsjf"]
-                        pass
+                            defining_snp = True
+                    if defining_snp:
+                        samples_groups_dict[tablename] = sorted(sample_groups_list)
+                    else:
+                        samples_groups_dict[tablename] = ['<font color="red">No defining SNP</font>']
+                except TypeError:
+                    message = f'File TypeError'
+                    print(f'{message}: {filename}')
+                    samples_groups_dict[tablename] = [f'{message}: {filename}']
+                    pass
+            return samples_groups_dict, gather_mal_list
+        if self.debug:
+            for filename in vcf_list:
+                filename, mal, found_positions, found_positions_mix = find_initial_positions(filename)
+                count += 1
+                samples_groups_dict, gather_mal_list = bin_and_html_table(filename, mal, found_positions, found_positions_mix, count)
         else:
             with futures.ProcessPoolExecutor(max_workers=self.cpu_count_half) as pool: #ProcessPoolExecutor ThreadPoolExecutor
                 for filename, mal, found_positions, found_positions_mix in pool.map(find_initial_positions, vcf_list):
-                    sample_groups_list = []
                     count += 1
-                    if mal:
-                        samples_groups_dict[f'{os.path.basename(filename)}'] = ['<font color="red">Corrupt VCF file</font>']
-                        gather_mal_list = gather_mal_list + mal
-                    else:
-                        try:
-                            for abs_position in list(defining_snps.keys() & (found_positions.keys() | found_positions_mix.keys())):
-                                # print(f'{defining_snps[abs_position]}: {filename}')
-                                sys.stdout.write("\r%i VCF files moved" % count)
-                                sys.stdout.flush()
-                                group = defining_snps[abs_position]
-                                group_directory = f'{sample_path_name}/{group}'
-                                sample_groups_list.append(group)
-                                if not os.path.exists(group_directory):
-                                    os.makedirs(group_directory)
-                                shutil.copy(filename, group_directory)
-                            if len(list(defining_snps.keys() & found_positions_mix.keys())) > 0:
-                                filename=f'{os.path.basename(filename)} <font color="red">[[MIXED]]</font>'
-                            else:
-                                filename=f'{os.path.basename(filename)}'
-                            if sample_groups_list: 
-                                samples_groups_dict[filename] = sorted(sample_groups_list)
-                            else:
-                                samples_groups_dict[filename] = ['<font color="red">No defining SNP</font>']
-                        except TypeError:
-                            message = f'File TypeError'
-                            print(f'{message}: {filename}')
-                            samples_groups_dict[filename] = ["laskdjflkasdjfkladsjf"]
-                            gather_mal_list = gather_mal_list + mal
+                    samples_groups_dict, gather_mal_list = bin_and_html_table(filename, mal, found_positions, found_positions_mix, count)
         self.all_mal = self.all_mal + gather_mal_list
         post_vcf_list_size = len(glob.glob(f'{sample_path_name}/*.vcf'))
         difference = pre_vcf_list_size - post_vcf_list_size
@@ -929,6 +921,7 @@ if __name__ == '__main__':
                 file_management.subset()
             file_management.backup_vcfs()
     except AttributeError:
+        print(f'Check your reference optin name against `vsnp_path_adder.py -s` list')
         pass
     print('Fixing VCF files...')
     vcf_list=glob.glob(f'{args.working_directory}/*.vcf')
@@ -991,8 +984,11 @@ if __name__ == '__main__':
         if reference_options.excel:
             dependents_dir = f'{working_directory}/dependents'
             os.makedirs(dependents_dir)
-            shutil.copy(reference_options.excel, dependents_dir)
-            shutil.copy(reference_options.remove, dependents_dir)
+            try:
+                shutil.copy(reference_options.excel, dependents_dir)
+                shutil.copy(reference_options.remove, dependents_dir)
+            except (OSError, TypeError):
+                pass
             snp_alignment.zipit(dependents_dir, dependents_dir)
     except AttributeError:
         with open(f'{snp_alignment.sample_path_name}/NO_DEPENDENCY_FILES', 'w') as message_out:

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-__version__ = "0.2.01"
+__version__ = "2.0.0"
 
 import os
 import sys
@@ -51,6 +51,7 @@ class Reference_Chromosome:
         species_cross_reference["NC_000962.3"] = "Mycobacterium_H37"
         species_cross_reference["CP033688.1"] = "para-CP033688"
         species_cross_reference["NC_002944.2"] = "para-NC002944"
+        species_cross_reference["Gua1_1407_2018"] = "guatemala"
         self.species_cross_reference = species_cross_reference
 
         if working_directory == '.':

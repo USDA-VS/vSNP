@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-__version__ = "0.2.01"
+__version__ = "2.0.0"
 
 import os
 import re
@@ -156,7 +156,9 @@ class File_Management:
             try:
                 for line in file:
                     if line.rstrip(): # true if not empty line'^$'
-                        line = line.rstrip() #remove right white space
+                        line = line.rstrip()  #remove right white space
+                        line = re.sub(r';MQM=', r';MQ=', line) #Allow Freebayes MQM to be read as MQ.  MQ is VCF standard
+                        line = re.sub(r'ID=MQM,', r'ID=MQ,', line)
                         line = re.sub('"AC=', 'AC=', line)
                         line = re.sub('""', '"', line)
                         line = re.sub('""', '"', line)
