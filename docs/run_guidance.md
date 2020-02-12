@@ -41,5 +41,5 @@ If HPC resources are available talk to your system administrator to utilize mult
 It is convenient after running multiple samples to see all stats in a single file.  In working directory containing all subdirectories of the multiple samples.<br>
 
 ```bash
-mkdir stats; find . -name "*stat*xlsx" -exec cp -v {} stats \;; cd stats; excel_append_files.py
+mkdir stats; find . -name "*stat*xlsx" -exec cp -v {} stats \;; cd stats; vsnp_excel_merge_files.py
 ```

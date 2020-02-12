@@ -10,6 +10,8 @@
 
 `vsnp_merge_vcf_into_fasta.py`: Merge VCF calls to FASTA for a reference guided assembly
 
+`vsnp_fasta_to_snps_table.py`: Make a cascading table and corresponding tree from an aligned FASTA
+
 `vsnp_spoligotype.py`: Get Mycobacterium TB complex spoligotype
 
 `vsnp_bruc_mlst.py`: Get Brucella MLST
