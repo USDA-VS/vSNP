@@ -1,5 +1,7 @@
 # vSNP Utility Scripts:
 
+### See -h option for usage
+
 ` vsnp_path_adder.py`:  Add reference option
 
 `vsnp_fasta_gbk_gff_by_acc.py`: Use NCBI accession to download FASTA, GFF and GBK files
