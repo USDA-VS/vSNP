@@ -1,5 +1,3 @@
-# Procedures for whole genome SNP analysis using the vSNP tool
-
 ## Purpose/Scope
 
 This document specifies the procedures for running the whole genome
@@ -31,9 +29,7 @@ To analyze vSNP output
 
 - Program for editing VCF files such as Microsoft Excel or equivalent.
 
-## Procedure
-
-# Installation of Code
+## Installation of Code
 
 - vSNP is installed following the instructions at: <https://github.com/USDA-VS/vSNP> .The repository records changes for both vSNP scripts and installation instructions.
 
@@ -43,35 +39,28 @@ To analyze vSNP output
 
 - To ensure vSNP reproducibility, test files are available at: [USDA-VS's Github page](https://github.com/USDA-VS). There are two repositories for testing step 1. A repository that includes [*Mycobacterium bovis* FASTQ files](https://github.com/USDA-VS/fastq_data_set-tb_complex) and a repository containing [*Brucella suis* biovar 1 test files](https://github.com/USDA-VS/fastq_data_set-brucella). For step 2 testing a [repository of VCF files](https://github.com/USDA-VS/vcf_test_files) against different references is available.
 
-# Update Code Repository
+## Update Code Repository
 
 - vSNP can be updated using the Anaconda installation package.
 - File shown using `vsnp_path_adder.py -s` will be erased on update.  Either save file prior to updating or use `vsnp_path_adder.py -d` to re-establish paths after updating.
 
-# Reference Options
+## Reference Options
 
 - Reference options can be grouped and accessed via named directories. New directories are added using, `vsnp_path_adder.py` (installed with vSNP). In vSNP\'s installed package, reference option paths are stored in \"reference_options_paths.txt". Directory/reference options are shown using -t option.
 
 - Seven files can be included:
-
   - Excel: (see template\_define\_filter.xlsx) with defining SNPs
     and filter positions. \<Required for grouping\>
-
   - Excel: metadata.xlsx 3 column file: VCF file name, updated file
     name, representative (optional boolean). File name must contain
     \"meta\" somewhere in its name. \<Optional\>
-
   - Excel: remove\_from\_analysis.xlsx 1 column file: removes files
     based on name minus .vcf extension. File name must contain
     \"remove\" somewhere in its name. \<Optional\>
-
   - FASTA (.fasta): used by vSNP\_step1.py as reference. \<Required,
     unless explicitly given with -r option\>
-
   - GBK (.gbk): used to annotate VCF files and tables. \<Optional\>
-
   - GFF (.gff): used by IGV to show annotation. \<Optional\>
-
   - IGV file: .genome IGV file mapping FASTA and GFF. \<Optional\>
 
 - Ready-to-use vSNP reference option files for different reference
@@ -113,13 +102,10 @@ basic usage, available options and their descriptions.
 
   - `-r1`, Required: single read or R1 when Illumina paired reads
     used.
-
   - `-r2`, Optional: R2 Illumina reads.
-
   - `-r`, Optional: Provide reference option or FASTA file. If neither
     are given, no -r option, then a TB/Brucella/paraTB best
     reference is searched.
-
   - `-t`, See reference options.
 
 - Sample FASTQ files need to be separated into individual directories.
@@ -303,7 +289,7 @@ unreliable SNP calls.
     - `RAxML-bestTree` provided as .tre file (for viewing and formatting) in a phylogenetic tree program.
 
 ## Reference option files
- Each reference can use a set of dependency files. They must be located in a folder accessible to the analyst. 
+ Each reference can use a set of dependency files. They must be located in a folder accessible to the analyst.
 
 - The analyst may need to make corrections and adjustments during the
   validation procedure to the `define_filter`.
