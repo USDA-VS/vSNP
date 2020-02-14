@@ -1,8 +1,7 @@
-## Purpose/Scope
+## Purpose
 
-This document specifies the procedures for running the whole genome
-single nucleotide polymorphism (SNP) analysis tool called vSNP.
-
+This document specifies the procedures for running whole genome
+SNP analysis tool called vSNP.
 
 ## Equipment and Materials Required
 
