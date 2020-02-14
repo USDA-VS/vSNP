@@ -69,19 +69,19 @@ To analyze vSNP output
 
 - Step 1 is called on a working directory containing zipped FASTQ using one of the three senario options:
   
-  1) Provide a FASTA
+  1. Provide a FASTA
   ```bash
   vSNP_step1.py -r1 *_R1*fastq.gz -r2 *_R2*fastq.gz -r *fasta
   vSNP_step1.py -r1 *fastq.gz -r *fasta
   ```
 
-  2) Provide a Reference Option
+  2. Provide a Reference Option
   ```bash
   Run -t option to see table of reference options: vSNP_step1.py -t
   vSNP_step1.py -r1 *_R1*fastq.gz -r2 *_R2*fastq.gz -r Mycobacterium_AF2122
   ```
 
-  3) Find Best Reference (only for TB complex, paraTB, and Brucella)<br>
+  3. Find Best Reference (only for TB complex, paraTB, and Brucella)<br>
   Run without -r option
   ```bash
   vSNP_step1.py -r1 *_R1*fastq.gz -r2 *_R2*fastq.gz
@@ -95,13 +95,13 @@ basic usage, available options and their descriptions.
 
 - Options important for understanding step 1 are:
 
-  - `-r1`, Required: single read or R1 when Illumina paired reads
+  - `-r1` Required: single read or R1 when Illumina paired reads
     used.
-  - `-r2`, Optional: R2 Illumina reads.
-  - `-r`, Optional: Provide reference option or FASTA file. If neither
+  - `-r2` Optional: R2 Illumina reads.
+  - `-r` Optional: Provide reference option or FASTA file. If neither
     are given, no -r option, then a TB/Brucella/paraTB best
     reference is searched.
-  - `-t`, See reference options.
+  - `-t` See reference options.
 
 - Sample FASTQ files need to be separated into individual directories.
   Reference organisms may need to be specified using `-r` option.
@@ -188,8 +188,7 @@ unreliable SNP calls.
 
 ### Input Data
 
-- `vSNP_step2.py` is called on a working directory containing Variant
-  Call Format (VCF) files.
+- `vSNP_step2.py` is called on a working directory containing VCF files.
 - All VCF files must be based on alignments to the same version of the
   same reference. The reference name (e.g., NC_002945.4) can be found
   in the VCF file header.
@@ -401,7 +400,7 @@ table description
 
 ## Adding or updating metatags
 
- It is important to enter the **p**ermanent unique isolate number correctly on the sequencing instrument as that number will carry through and link all the files together back to the original "raw" files. vSNP_step2.py can add metadata to the isolate number provided an Excel file (Excel file must have \"meta\" in its file name) in the reference option folder that contains the sample name (all characters left of the first underscore or period) in the first column and the metadata name in the second column. The sample name and metadata name cannot have underscores, spaces or periods within the number itself, but other characters such as dashes are acceptable.
+ It is important to enter the permanent unique isolate number correctly on the sequencing instrument as that number will carry through and link all the files together back to the original "raw" files. vSNP_step2.py can add metadata to the isolate number provided an Excel file (Excel file must have \"meta\" in its file name) in the reference option folder that contains the sample name (all characters left of the first underscore or period) in the first column and the metadata name in the second column. The sample name and metadata name cannot have underscores, spaces or periods within the number itself, but other characters such as dashes are acceptable.
 
 - MTBC metadata is maintained within the FileMaker database and Exported to Excel.
 - All other bacteria have the metadata managed using Excel worksheets
@@ -413,7 +412,7 @@ table description
 
 - In order to generate a proper SNP table and tree, there must be at least 3 isolates with the new group.
 - Using the SNP table containing isolates from the next largest group, identify candidate defining SNPs that contain the subgroup of isolates. Use IGV, Map-quality scores, QUAL scores, and SNP location (annotation) to determine the best candidate.
-- Enter the absolute number (chrom:SNP position) in the top row and group designation below it in the defining_filter.xlsx spreadsheet in the reference option folder. (See Reference option files on Page 8.)
+- Enter the absolute number (`chrom:SNP position`) in the top row and group designation below it in the defining_filter.xlsx spreadsheet in the reference option folder. (See Reference option files on Page 8.)
 - In the defining_filter.xlsx the -All column is special in that these positions are applied to all groups and subgroups.
 - Group filter do not apply to subgroups, so for subgroups, copy relevant filtered SNPs in the filter folder. For example, if the new group is a subgroup of a larger group, copy the positions of the larger group into the new group.
 
