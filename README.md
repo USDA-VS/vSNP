@@ -105,6 +105,9 @@ Recommended directory structure for step 1 and 2 output:
 
 ![](./dependencies/step2_screenshot.png)
 
+### Additional Instructions:
+Additional detail and run guidance can be found [here](./docs/detailed_usage.md)
+
 ### Utility Scripts:
 
 Descriptions for additional vSNP [utility scripts](./docs/utilities.md).
