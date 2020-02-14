@@ -106,7 +106,7 @@ Recommended directory structure for step 1 and 2 output:
 ![](./dependencies/step2_screenshot.png)
 
 # Procedure Detail:
-Procedure detail is [here](./docs/detailed_usage.md)
+Procedure detail is [here](./docs/detailed_usage.md).
 
 # Utility Scripts:
 

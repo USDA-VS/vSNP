@@ -15,7 +15,7 @@ To run vSNP
 - Software: vSNP is maintained at: <https://github.com/USDA-VS/vSNP>
 
 - Software: Reference option files can be download at:
-  https://github.com/USDA-VS/vSNP\_reference\_options.git.
+  https://github.com/USDA-VS/vSNP_reference_options.git.
 
 To analyze vSNP output
 
@@ -27,46 +27,42 @@ To analyze vSNP output
   Viewer (IGV) (<http://software.broadinstitute.org/software/igv/> )
   or equivalent.
 
-- Program for editing VCF files such as Microsoft Excel or equivalent.
+- Program for viewing tables such as Microsoft Excel or equivalent.
 
 ## Installation of Code
 
-- vSNP is installed following the instructions at: <https://github.com/USDA-VS/vSNP> .The repository records changes for both vSNP scripts and installation instructions.
-
-- Local copies of reference option files are maintained and pushed to this
-  repository when updates are made: Reference option files necessary to run vSNP are maintained at
-  https://github.com/USDA-VS/vSNP\_reference\_options.git
-
+- vSNP is installed following the instructions at: <https://github.com/USDA-VS/vSNP>.
+- Reference option files necessary to run vSNP are maintained at
+  https://github.com/USDA-VS/vSNP_reference_options.git
 - To ensure vSNP reproducibility, test files are available at: [USDA-VS's Github page](https://github.com/USDA-VS). There are two repositories for testing step 1. A repository that includes [*Mycobacterium bovis* FASTQ files](https://github.com/USDA-VS/fastq_data_set-tb_complex) and a repository containing [*Brucella suis* biovar 1 test files](https://github.com/USDA-VS/fastq_data_set-brucella). For step 2 testing a [repository of VCF files](https://github.com/USDA-VS/vcf_test_files) against different references is available.
 
-## Update Code Repository
+## vSNP Update
 
-- vSNP can be updated using the Anaconda installation package.
+- vSNP can be updated using the Anaconda installation package `conda update vsnp`.
 - File shown using `vsnp_path_adder.py -s` will be erased on update.  Either save file prior to updating or use `vsnp_path_adder.py -d` to re-establish paths after updating.
 
 ## Reference Options
 
-- Reference options can be grouped and accessed via named directories. New directories are added using, `vsnp_path_adder.py` (installed with vSNP). In vSNP\'s installed package, reference option paths are stored in \"reference_options_paths.txt". Directory/reference options are shown using -t option.
-
-- Seven files can be included:
-  - Excel: (see template\_define\_filter.xlsx) with defining SNPs
-    and filter positions. \<Required for grouping\>
+- vSNP_step1.py is ran by simply providing a reference or it can be given a directory name, or reference option, where the directory contains additional files.
+- Reference options can be accessed via these named directories. Directory/reference options are shown using -t option.
+- Seven reference option files can be included.  Although these files are not required providing them allows vSNP to provide its unique analysis.
+  - Excel: (see template_define_filter.xlsx) with defining SNPs
+    and filter positions.
   - Excel: metadata.xlsx 3 column file: VCF file name, updated file
     name, representative (optional boolean). File name must contain
-    \"meta\" somewhere in its name. \<Optional\>
-  - Excel: remove\_from\_analysis.xlsx 1 column file: removes files
+    \"meta\" somewhere in its name.
+  - Excel: remove_from_analysis.xlsx 1 column file: removes files
     based on name minus .vcf extension. File name must contain
-    \"remove\" somewhere in its name. \<Optional\>
-  - FASTA (.fasta): used by vSNP\_step1.py as reference. \<Required,
-    unless explicitly given with -r option\>
-  - GBK (.gbk): used to annotate VCF files and tables. \<Optional\>
-  - GFF (.gff): used by IGV to show annotation. \<Optional\>
-  - IGV file: .genome IGV file mapping FASTA and GFF. \<Optional\>
+    \"remove\" somewhere in its name.
+  - FASTA (.fasta): used by vSNP_step1.py as reference.
+  - GBK (.gbk): used to annotate VCF files and tables.
+  - GFF (.gff): used by IGV to show annotation.
+  - IGV file: .genome IGV file mapping FASTA and GFF.
 
 - Ready-to-use vSNP reference option files for different reference
   options can be cloned from here:
-  https://github.com/USDA-VS/vSNP\_reference\_options.git. The cloned
-  repository can be added with `vsnp_path_adder.py -d`.
+  https://github.com/USDA-VS/vSNP_reference_options.git. The cloned
+  repository can be added with `vsnp_path_adder.py -d`.  The path given to `vsnp_path_adder.py -d` should be the **parent** of each reference option directory.
 
 # vSNP Step 1 -- Command-line
 
@@ -131,7 +127,7 @@ basic usage, available options and their descriptions.
 
  Output of the script should be evaluated for completeness and failures. There are multiple potential causes for failures during Step 1. It is the bioinformaticist's responsibility to determine why a sample failed to identify a reference to align against and also to determine if Kraken or another program should be utilized to better characterize the sample. The bioinformaticist should determine if the other outputs are reasonable, however; it is the validator, or SME's responsibility to check the accuracy of the output. See below.
 
-- Sample statistics (sample\_name)\_(Date/time).xlsx
+- Sample statistics (sample_name)_(Date/time).xlsx
   - The data in this file is summarized for quick and easy review of
   the output of step 1.
   - Common errors and issues that can be determined from the
@@ -159,7 +155,7 @@ Example of combined sample statistic output
 
 *Reference not found* error
   - If the script returned with no reference found the
-  best\_reference.txt file should be examined.
+  best_reference.txt file should be examined.
   - Check the file(s) for signs of a poor sample. (See below)
   - Reference may need to be determined by another method such as Kraken
   or wet lab techniques.
@@ -196,7 +192,7 @@ unreliable SNP calls.
 - `vSNP_step2.py` is called on a working directory containing Variant
   Call Format (VCF) files.
 - All VCF files must be based on alignments to the same version of the
-  same reference. The reference name (e.g., NC\_002945.4) can be found
+  same reference. The reference name (e.g., NC_002945.4) can be found
   in the VCF file header.
 - Use `-h` option to see available options and their descriptions:
 - Options important when understanding step 2:
@@ -265,7 +261,7 @@ unreliable SNP calls.
 - **Step 2** generates SNP tables and phylogenetic trees
   for each group or subgroup.
 
-  - All\_VCFs is an option that creates a phylogenetic tree and SNP tables for all sequences in the comparison. Depending on the genetic distance and number of sequences, this option may or may not be practical to execute.
+  - All_VCFs is an option that creates a phylogenetic tree and SNP tables for all sequences in the comparison. Depending on the genetic distance and number of sequences, this option may or may not be practical to execute.
 
   - Each group and subgroup will have its own file comparing only those isolates within that group.
   
@@ -325,7 +321,7 @@ unreliable SNP calls.
 
 - **Evaluating the accuracy of the spoligotype calls**
 
-  - spoligo.txt -- vSNP's "spoligo" fuction outputs counts of each spacer sequence against the raw FASTQ files and the octal code based on those counts. As with best\_reference.txt this file is available for examination.
+  - spoligo.txt -- vSNP's "spoligo" fuction outputs counts of each spacer sequence against the raw FASTQ files and the octal code based on those counts. As with best_reference.txt this file is available for examination.
   ![](./spoligo.png)<br>
   spoligo.txt contents example
 
@@ -396,7 +392,7 @@ table description
 
     - Added to vcf, Initials, date corrected.
 
-  - Occasionally an erroneous SNP call is made because the position within the genome is problematic. Examples include near a deletion event, within repeat regions, reads mapping to multiple areas of the genome, etc. When the position is not reliable across multiple isolates, the position itself should be added to the filter file which is located in the vSNP reference option folder rather than corrected within each vcf file. In general, it is best to filter the position as finely as possible. For example if the position is problematic across all phylogenetic groups then it should be included under the vcf\_all (typically Column A -- See Reference option files on Page 8). Otherwise limit filtering to the groups where the calls are problematic.
+  - Occasionally an erroneous SNP call is made because the position within the genome is problematic. Examples include near a deletion event, within repeat regions, reads mapping to multiple areas of the genome, etc. When the position is not reliable across multiple isolates, the position itself should be added to the filter file which is located in the vSNP reference option folder rather than corrected within each vcf file. In general, it is best to filter the position as finely as possible. For example if the position is problematic across all phylogenetic groups then it should be included under the vcf_all (typically Column A -- See Reference option files on Page 8). Otherwise limit filtering to the groups where the calls are problematic.
 
 - Verifying corrections and validating the phylogenetic tree.
 
@@ -406,7 +402,7 @@ table description
 
 ## Adding or updating metatags
 
- It is important to enter the **p**ermanent unique isolate number correctly on the sequencing instrument as that number will carry through and link all the files together back to the original "raw" files. vSNP\_step2.py can add metadata to the isolate number provided an Excel file (Excel file must have \"meta\" in its file name) in the reference option folder that contains the sample name (all characters left of the first underscore or period) in the first column and the metadata name in the second column. The sample name and metadata name cannot have underscores, spaces or periods within the number itself, but other characters such as dashes are acceptable.
+ It is important to enter the **p**ermanent unique isolate number correctly on the sequencing instrument as that number will carry through and link all the files together back to the original "raw" files. vSNP_step2.py can add metadata to the isolate number provided an Excel file (Excel file must have \"meta\" in its file name) in the reference option folder that contains the sample name (all characters left of the first underscore or period) in the first column and the metadata name in the second column. The sample name and metadata name cannot have underscores, spaces or periods within the number itself, but other characters such as dashes are acceptable.
 
 - MTBC metadata is maintained within the FileMaker database and Exported to Excel.
 - All other bacteria have the metadata managed using Excel worksheets
@@ -418,8 +414,8 @@ table description
 
 - In order to generate a proper SNP table and tree, there must be at least 3 isolates with the new group.
 - Using the SNP table containing isolates from the next largest group, identify candidate defining SNPs that contain the subgroup of isolates. Use IGV, Map-quality scores, QUAL scores, and SNP location (annotation) to determine the best candidate.
-- Enter the absolute number (chrom:SNP position) in the top row and group designation below it in the defining\_filter.xlsx spreadsheet in the reference option folder. (See Reference option files on Page 8.)
-- In the defining\_filter.xlsx the -All column is special in that these positions are applied to all groups and subgroups.
+- Enter the absolute number (chrom:SNP position) in the top row and group designation below it in the defining_filter.xlsx spreadsheet in the reference option folder. (See Reference option files on Page 8.)
+- In the defining_filter.xlsx the -All column is special in that these positions are applied to all groups and subgroups.
 - Group filter do not apply to subgroups, so for subgroups, copy relevant filtered SNPs in the filter folder. For example, if the new group is a subgroup of a larger group, copy the positions of the larger group into the new group.
 
 ## Removing isolates from the analysis
@@ -436,19 +432,19 @@ table description
 - Measured parameters shown in the Excel stats file may not be exact but should show similar values.
 - SNP alignment tables should report SNP at the same positions shown.
 
-## fastq\_data\_set-tb\_complex repository:
+## fastq_data_set-tb_complex repository:
 ![](./fastq_bovis_expected_1.png)
 ![](./fastq_bovis_expected_2.png)<br>
 
 - All files should align to reference genome AF2122. Note possible contamination in sample 13-1941. Reads mapping to the reference genome, genome coverage and average depth of coverage are all lower. Also, unmapped contig count is high. Even though all these files are closely related the "good snp count" is higher. Octal codes are cross reference against the mbovis.org database. Note there are no SB codes found for 03-1057 and 13-1941, and 14-2093 has an unexpected SB code. This is likely due to the lower coverage of these samples, which is causing a positive spacer to be misidentified. A perfect situation to investigate the spoligo.txt file.
 
-## fastq\_data\_set-brucella repository:
+## fastq_data_set-brucella repository:
 ![](./fastq_bruc_expected_1.png)
 ![](./fastq_bruc_expected_2.png)<br>
 
 - All files should align to reference genome for *B. suis* biovar 1. Measured parameters are similar for all samples, which are closely related and have the same read count in each FASTQ.
 
-## vcf\_test\_files:
+## vcf_test_files:
 
 ![](./bovis_table_expected.png)<br>
 *M. bovis* -- AF2122 reference
