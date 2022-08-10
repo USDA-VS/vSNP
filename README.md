@@ -29,11 +29,6 @@ vSNP is a 2-step process for efficiency.
 
 It is expected the setup user is familiar with the command-line and can install conda.
 
-Follow conda installation instructions:<br>
-https://bioconda.github.io/user/install.html#set-up-channels<br>
-Be sure to perform channel setup.<br>
-
-
 Do not work in base.  If needed make new environmnet.
 
 ```bash
@@ -43,7 +38,7 @@ conda create --name myenv
 Installation:
 
 ```bash
-conda install vsnp
+conda install vsnp -c conda-forge -c bioconda
 ```
 
 Run `vSNP_step1.py -h` to see usage details.
