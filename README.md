@@ -1,4 +1,4 @@
-# vSNP3
+# vSNP3 - Latest Version - Recommended
 For the latest version of vSNP see [vSNP3](https://github.com/USDA-VS/vSNP3) repository.
 
 # Overview
