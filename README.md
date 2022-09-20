@@ -1,3 +1,6 @@
+# vSNP3
+For the latest version of vSNP see [vSNP3](https://github.com/USDA-VS/vSNP3) repository.
+
 # Overview
 
 ## vSNP -- validate SNPs
@@ -107,5 +110,3 @@ Procedure detail is [here](./docs/detailed_usage.md).
 
 vSNP [utility scripts](./docs/utilities.md).
 
-# Archived version:
-https://github.com/USDA-VS/vSNP_archive/tree/master/vSNP_version1
