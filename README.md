@@ -109,4 +109,3 @@ Procedure detail is [here](./docs/detailed_usage.md).
 # Utility Scripts:
 
 vSNP [utility scripts](./docs/utilities.md).
-
