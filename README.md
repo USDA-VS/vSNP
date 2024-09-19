@@ -1,6 +1,8 @@
 # vSNP3 - Latest Version - Recommended
 Latest version of vSNP see [vSNP3](https://github.com/USDA-VS/vSNP3) repository.
 
+**The scripts in this repository are no longer maintained**
+
 # Overview
 
 ## vSNP -- validate SNPs
