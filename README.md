@@ -1,3 +1,9 @@
+This repository has been archived and is no longer maintained.
+
+The code is provided for historical reference and may contain unpatched or unknown vulnerabilities.
+
+It should not be used in production systems.
+ 
 # vSNP3 - Latest Version - Recommended
 Latest version of vSNP see [vSNP3](https://github.com/USDA-VS/vSNP3) repository.
 
